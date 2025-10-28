@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Marcações - Flash Cabeleireiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="center">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+                </a>
+            </div>
+            
+            <div class="menu" id="menu">
+                <a href="index.html#inicio">Início</a>
+                <a href="index.html#servicos">Serviços</a>
+                <a href="loja.html">Loja</a>
+                <a href="marcacoes.html">Marcações</a>
+                <a href="index.html#contactos">Contactos</a>
+            </div>
+            
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section Marcações -->
+    <section class="marcacoes-hero">
+        <div class="center">
+            <div class="marcacoes-hero-content">
+                <h1><span class="highlight">Marque o seu</span><br>Atendimento</h1>
+                <p>Escolha o melhor horário para cuidar da sua beleza.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulário de Marcação -->
+    <section class="section marcacoes-form-section">
+        <div class="center">
+            <div class="form-container">
+                <h2 class="section-title">Preencha os Seus Dados</h2>
+                
+                <form id="marcacaoForm" class="marcacao-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo *</label>
+                            <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone *</label>
+                            <input type="tel" id="telefone" name="telefone" required placeholder="+351 912 345 678">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.pt">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="servico">Serviço Pretendido *</label>
+                            <select id="servico" name="servico" required>
+                                <option value="">Selecione um serviço</option>
+                                <option value="corte">Corte & Penteado</option>
+                                <option value="coloracao">Coloração</option>
+                                <option value="tratamento">Tratamentos</option>
+                                <option value="eventos">Eventos Especiais</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data">Data Preferida *</label>
+                            <input type="date" id="data" name="data" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hora">Hora Preferida *</label>
+                            <select id="hora" name="hora" required>
+                                <option value="">Selecione o horário</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                                <option value="18:00">18:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional que queira partilhar..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Enviar Pedido de Marcação</button>
+                        <p class="form-note">* Entraremos em contacto para confirmar a sua marcação</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Formulário de marcação
+        document.getElementById('marcacaoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validação básica
+            if (!data.nome || !data.telefone || !data.servico || !data.data || !data.hora) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // Simular envio (aqui você pode adicionar integração com backend)
+            alert(`Obrigado, ${data.nome}!\n\nO seu pedido de marcação foi recebido.\nEntraremos em contacto em breve para confirmar.\n\nServiço: ${data.servico}\nData: ${data.data}\nHora: ${data.hora}`);
+            
+            // Limpar formulário
+            this.reset();
+        });
+
+        // Definir data mínima como hoje
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataInput = document.getElementById('data');
+            const hoje = new Date().toISOString().split('T')[0];
+            dataInput.setAttribute('min', hoje);
+        });
+    </script>
+</body>
+</html>

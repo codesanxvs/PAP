@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Flash Cabeleireiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="center">
+            <div class="logo">
+                <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+            </div>
+            
+            <div class="menu" id="menu">
+                <a href="#inicio">Início</a>
+                <a href="#servicos">Serviços</a>
+                <a href="loja.html">Loja</a>
+                <a href="marcacoes.html">Marcações</a>
+                <a href="#contactos">Contactos</a>
+            </div>
+            
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="sobre" id="inicio">
+        <div class="hair-tools">
+            <div class="tool">✂️</div>
+            <div class="tool">💄</div>
+            <div class="tool">🪒</div>
+            <div class="tool">✨</div>
+        </div>
+        
+        <div class="extras"></div>
+        
+        <div class="center">
+            <div class="texto-sobre">
+                <h1><span class="highlight">Venha cuidar</span><br>do seu cabelo</h1>
+                <p>Transforme o seu visual com os nossos serviços profissionais de cabeleireiro. Experiência, qualidade e dedicação em cada corte.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Imagem da Loja -->
+    <section class="section loja-showcase">
+        <div class="center">
+            <div class="loja-showcase-container">
+                <img src="assets/loja-fachada.jpg" alt="Flash Cabeleireiro - Nossa Loja" class="loja-showcase-image">
+            </div>
+        </div>
+    </section>
+
+    <section class="section services" id="servicos">
+        <div class="center">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>✂️ Corte & Penteado</h3>
+                    <p>Cortes modernos e clássicos adaptados ao seu estilo pessoal</p>
+                    <div class="price">A partir de 25€</div>
+                </div>
+                <div class="service-card">
+                    <h3>🎨 Coloração</h3>
+                    <p>Coloração profissional com produtos de qualidade premium</p>
+                    <div class="price">A partir de 45€</div>
+                </div>
+                <div class="service-card">
+                    <h3>✨ Tratamentos</h3>
+                    <p>Tratamentos capilares para nutrir e reparar o seu cabelo</p>
+                    <div class="price">A partir de 35€</div>
+                </div>
+                <div class="service-card">
+                    <h3>👰 Eventos Especiais</h3>
+                    <p>Penteados para casamentos e ocasiões importantes</p>
+                    <div class="price">A partir de 60€</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section contact" id="contactos">
+        <div class="center">
+            <h2 class="section-title">Contactos</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong>📍 Morada:</strong><br>
+                    Avenida 9 Abril 5 – Pontével<br>
+                    2070-376 Pontével (Cartaxo)
+                </div>
+                <div class="contact-item">
+                    <strong>📞 Telefone:</strong><br>
+                    +351 243 123 456
+                </div>
+                <div class="contact-item">
+                    <strong>✉️ Email:</strong><br>
+                    info@flashcabeleireiro.pt
+                </div>
+                <div class="contact-item">
+                    <strong>🕒 Horário:</strong><br>
+                    Segunda a Sexta: 9h - 19h<br>
+                    Sábado: 9h - 17h<br>
+                    Domingo: Fechado
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
