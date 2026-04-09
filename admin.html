@@ -56,63 +56,93 @@
         </div>
 
         <!-- Tab Marcações -->
-        <div class="admin-tab-content active" id="adminMarcacoesTab">
-            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Telefone</th>
-                            <th>Serviço</th>
-                            <th>Data</th>
-                            <th>Hora</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="marcacoesTableBody">
-                        <tr>
-                            <td>Maria Silva</td>
-                            <td>+351 912 345 678</td>
-                            <td>Corte & Penteado</td>
-                            <td>25/11/2025</td>
-                            <td>10:00</td>
-                            <td><span class="status-badge status-pendente">Pendente</span></td>
-                            <td>
-                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>João Santos</td>
-                            <td>+351 918 765 432</td>
-                            <td>Coloração</td>
-                            <td>26/11/2025</td>
-                            <td>14:00</td>
-                            <td><span class="status-badge status-confirmada">Confirmada</span></td>
-                            <td>
-                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ana Costa</td>
-                            <td>+351 925 678 901</td>
-                            <td>Tratamentos</td>
-                            <td>27/11/2025</td>
-                            <td>16:00</td>
-                            <td><span class="status-badge status-pendente">Pendente</span></td>
-                            <td>
-                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="admin-tab-content active" id="adminMarcacoesTab">
+    <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Telefone</th>
+                    <th>Serviço</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="marcacoesTableBody">
+                <!-- A tabela será preenchida dinamicamente via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<script>
+const API_URL = 'http://localhost:3000/api/marcacoes';
+
+// Função para carregar marcações do backend
+async function carregarMarcacoes() {
+    const tbody = document.getElementById('marcacoesTableBody');
+    tbody.innerHTML = '<tr><td colspan="7">Carregando...</td></tr>';
+
+    try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        if (data.success) {
+            tbody.innerHTML = '';
+            data.marcacoes.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${m.nome}</td>
+                    <td>${m.telefone}</td>
+                    <td>${m.servico}</td>
+                    <td>${m.data}</td>
+                    <td>${m.hora}</td>
+                    <td><span class="status-badge ${m.status.toLowerCase()}">${m.status}</span></td>
+                    <td>
+                        <button class="admin-action-btn btn-confirmar" onclick="atualizarStatus('${m.id}', 'Confirmada', this)">Confirmar</button>
+                        <button class="admin-action-btn btn-cancelar" onclick="atualizarStatus('${m.id}', 'Cancelada', this)">Cancelar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="7">Erro ao carregar marcações</td></tr>';
+        }
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="7">Erro ao conectar ao servidor</td></tr>';
+    }
+}
+
+// Função para atualizar status de uma marcação
+async function atualizarStatus(id, novoStatus, btn) {
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API_URL}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: novoStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+            await carregarMarcacoes(); // Recarrega tabela
+        } else {
+            alert('Erro ao atualizar status: ' + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Erro ao conectar com o servidor');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// Carregar marcações quando a página abre
+window.addEventListener('DOMContentLoaded', carregarMarcacoes);
+</script>
         <!-- Tab Produtos -->
         <div class="admin-tab-content" id="adminProdutosTab">
             <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">➕ Adicionar Produto</h2>

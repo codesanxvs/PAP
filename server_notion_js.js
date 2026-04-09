@@ -1,4 +1,4 @@
-// server.js - Backend para integração com Notion
+// server.js - Versão Final (SEM STATUS)
 const express = require('express');
 const cors = require('cors');
 const { Client } = require('@notionhq/client');
@@ -12,10 +12,10 @@ app.use(express.json());
 
 // Configuração do Notion
 const notion = new Client({
-    auth: 'SEU_NOTION_TOKEN_AQUI' // Substitua pelo seu token
+    auth: 'ntn_b360298511599QkI8LW4c9PwSUHyRoRXgqNo5x9Nulsfqw' 
 });
 
-const DATABASE_ID = 'SEU_DATABASE_ID_AQUI'; // Substitua pelo ID da sua base
+const DATABASE_ID = '33d0d6c1309b80529fc6f4ef8175f496';
 
 // Rota para criar marcação
 app.post('/api/marcacoes', async (req, res) => {
@@ -34,149 +34,67 @@ app.post('/api/marcacoes', async (req, res) => {
         const response = await notion.pages.create({
             parent: { database_id: DATABASE_ID },
             properties: {
-                'Nome': {
-                    title: [
-                        {
-                            text: {
-                                content: nome
-                            }
-                        }
-                    ]
-                },
-                'Telefone': {
-                    phone_number: telefone
-                },
-                'Email': {
-                    email: email || null
-                },
-                'Serviço': {
-                    select: {
-                        name: servico
-                    }
-                },
-                'Data': {
-                    date: {
-                        start: data
-                    }
-                },
-                'Hora': {
-                    rich_text: [
-                        {
-                            text: {
-                                content: hora
-                            }
-                        }
-                    ]
-                },
-                'Observações': {
-                    rich_text: [
-                        {
-                            text: {
-                                content: observacoes || ''
-                            }
-                        }
-                    ]
-                },
-                'Status': {
-                    select: {
-                        name: 'Pendente'
-                    }
-                }
-            }
+    'Nome': {
+        title: [{ text: { content: nome || 'Sem Nome' } }]
+    },
+    'Telefone': {
+        phone_number: telefone || ''
+    },
+    'Email': {
+        email: email && email.includes('@') ? email : null
+    },
+    'Serviço Pretendido': {
+        select: { name: servico } 
+    },
+    'Data Preferida': {
+        date: { start: data }
+    },
+    'Hora Preferida': { 
+        // CORREÇÃO: Enviando como Select para bater com o teu Notion
+        select: { name: hora } 
+    },
+    'Observações': {
+        rich_text: [{ text: { content: observacoes || '' } }]
+    }
+    // Status removido completamente
+}
         });
 
-        console.log('✅ Marcação criada no Notion:', response.id);
-
-        res.json({
-            success: true,
-            message: 'Marcação criada com sucesso!',
-            notionPageId: response.id
-        });
+        console.log('✅ Marcação criada no Notion!');
+        res.json({ success: true, message: 'Marcação criada com sucesso!' });
 
     } catch (error) {
-        console.error('❌ Erro ao criar marcação:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao criar marcação',
-            error: error.message
-        });
+        console.error('❌ Erro:', error.message);
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Rota para listar marcações (para o painel admin)
+// Rota para listar marcações
 app.get('/api/marcacoes', async (req, res) => {
     try {
         const response = await notion.databases.query({
             database_id: DATABASE_ID,
-            sorts: [
-                {
-                    property: 'Data de Criação',
-                    direction: 'descending'
-                }
-            ]
+            sorts: [{ property: 'Data Preferida', direction: 'descending' }]
         });
 
         const marcacoes = response.results.map(page => ({
             id: page.id,
-            nome: page.properties.Nome.title[0]?.text.content || '',
-            telefone: page.properties.Telefone.phone_number || '',
-            email: page.properties.Email.email || '',
-            servico: page.properties.Serviço.select?.name || '',
-            data: page.properties.Data.date?.start || '',
-            hora: page.properties.Hora.rich_text[0]?.text.content || '',
-            observacoes: page.properties.Observações.rich_text[0]?.text.content || '',
-            status: page.properties.Status.select?.name || 'Pendente'
+            nome: page.properties['Nome']?.title[0]?.text.content || '',
+            telefone: page.properties['Telefone']?.phone_number || '',
+            email: page.properties['Email']?.email || '',
+            servico: page.properties['Serviço Pretendido']?.select?.name || '',
+            data: page.properties['Data Preferida']?.date?.start || '',
+            hora: page.properties['Hora Preferida']?.rich_text[0]?.text.content || '',
+            observacoes: page.properties['Observações']?.rich_text[0]?.text.content || ''
+            // STATUS REMOVIDO DAQUI TAMBÉM
         }));
 
-        res.json({
-            success: true,
-            marcacoes
-        });
-
+        res.json({ success: true, marcacoes });
     } catch (error) {
-        console.error('❌ Erro ao listar marcações:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao listar marcações',
-            error: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Rota para atualizar status da marcação
-app.patch('/api/marcacoes/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-
-        await notion.pages.update({
-            page_id: id,
-            properties: {
-                'Status': {
-                    select: {
-                        name: status
-                    }
-                }
-            }
-        });
-
-        res.json({
-            success: true,
-            message: 'Status atualizado com sucesso!'
-        });
-
-    } catch (error) {
-        console.error('❌ Erro ao atualizar status:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro ao atualizar status',
-            error: error.message
-        });
-    }
-});
-
-// Iniciar servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
-    console.log(`📝 Pronto para receber marcações e enviar para o Notion!`);
 });

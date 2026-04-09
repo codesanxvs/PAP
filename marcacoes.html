@@ -19,11 +19,11 @@
             
             <div class="menu" id="menu">
                 <a href="index.html">Início</a>
-                <a href="serviços.html">Serviços</a>
+                <a href="index.html#servicos">Serviços</a>
                 <a href="loja.html">Loja</a>
-                <a href="marcacoes.html">Marcações</a>
+                <a href="marcacoes.html" class="active">Marcações</a>
                 <a href="index.html#contactos">Contactos</a>
-                <a href="login.html">Login</a>
+                <a href="auth.html">Login</a>
             </div>
             
             <div class="icon">
@@ -32,7 +32,6 @@
         </div>
     </header>
 
-    <!-- Hero Section Marcações -->
     <section class="marcacoes-hero">
         <div class="center">
             <div class="marcacoes-hero-content">
@@ -42,7 +41,6 @@
         </div>
     </section>
 
-    <!-- Formulário de Marcação -->
     <section class="section marcacoes-form-section">
         <div class="center">
             <div class="form-container">
@@ -71,11 +69,10 @@
                             <label for="servico">Serviço Pretendido *</label>
                             <select id="servico" name="servico" required>
                                 <option value="">Selecione um serviço</option>
-                                <option value="corte">Corte & Penteado</option>
-                                <option value="coloracao">Coloração</option>
-                                <option value="tratamento">Tratamentos</option>
-                                <option value="eventos">Eventos Especiais</option>
-                                <option value="outro">Outro</option>
+                                <option value="Corte & Penteado">Corte & Penteado</option>
+                                <option value="Coloração">Coloração</option>
+                                <option value="Tratamentos">Tratamentos</option>
+                                <option value="Eventos Especiais">Eventos Especiais</option>
                             </select>
                         </div>
                     </div>
@@ -109,7 +106,10 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn-submit">Enviar Pedido de Marcação</button>
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span id="btnText">Enviar Pedido de Marcação</span>
+                            <span id="btnLoader" style="display: none;">⏳ Enviando...</span>
+                        </button>
                         <p class="form-note">* Entraremos em contacto para confirmar a sua marcação</p>
                     </div>
                 </form>
@@ -119,27 +119,56 @@
 
     <script src="script.js"></script>
     <script>
-        // Formulário de marcação
-        document.getElementById('marcacaoForm').addEventListener('submit', function(e) {
+        const API_URL = 'http://localhost:3000'; // rota do backend
+
+        document.getElementById('marcacaoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            
             const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            const data = {
+                nome: formData.get('nome'),
+                telefone: formData.get('telefone'),
+                email: formData.get('email'),
+                servico: formData.get('servico'), // OK: O servidor espera 'servico'
+                data: formData.get('data'),       // OK: O servidor espera 'data'
+                hora: formData.get('hora'),       // OK: O servidor espera 'hora'
+                observacoes: formData.get('observacoes') || ''
+};
             
-            // Validação básica
-            if (!data.nome || !data.telefone || !data.servico || !data.data || !data.hora) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                return;
+            try {
+                const response = await fetch(`${API_URL}/api/marcacoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Marcação criada com sucesso!\n\nObrigado, ${data.nome}!\n\nEntraremos em contacto em breve.\n📅 ${data.data} ⏰ ${data.hora} 💇 ${data.servico}`);
+                    this.reset();
+                } else {
+                    throw new Error(result.message || 'Erro ao criar marcação');
+                }
+
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(`❌ Erro ao enviar marcação!\n\n${error.message}\n\nPor favor, tente novamente.`);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
             }
-            
-            // Simular envio (aqui você pode adicionar integração com backend)
-            alert(`Obrigado, ${data.nome}!\n\nO seu pedido de marcação foi recebido.\nEntraremos em contacto em breve para confirmar.\n\nServiço: ${data.servico}\nData: ${data.data}\nHora: ${data.hora}`);
-            
-            // Limpar formulário
-            this.reset();
         });
 
-        // Definir data mínima como hoje
         document.addEventListener('DOMContentLoaded', function() {
             const dataInput = document.getElementById('data');
             const hoje = new Date().toISOString().split('T')[0];
