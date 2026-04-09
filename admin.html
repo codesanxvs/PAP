@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Flash Cabeleireiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="center">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+                </a>
+            </div>
+            
+            <div class="menu" id="menu">
+                <a href="index.html">Início</a>
+                <a href="admin.html" class="active">Admin</a>
+            </div>
+
+            <div class="user-avatar-menu" id="userAvatarMenu">
+                <div class="user-avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">A</span>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <strong id="userName">Administrador</strong>
+                        <span id="userEmail">admin@flash.pt</span>
+                    </div>
+                    <a href="index.html">🏠 Voltar ao Site</a>
+                    <a href="#" onclick="logout()">🚪 Sair</a>
+                </div>
+            </div>
+            
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h1>⚙️ Painel de Administração</h1>
+            <p>Gerir marcações, produtos e clientes da Flash Cabeleireiro</p>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('marcacoes')">📅 Marcações</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('produtos')">🛍️ Produtos</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('clientes')">👥 Clientes</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('estatisticas')">📊 Estatísticas</button>
+        </div>
+
+        <!-- Tab Marcações -->
+        <div class="admin-tab-content active" id="adminMarcacoesTab">
+            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Telefone</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marcacoesTableBody">
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>+351 912 345 678</td>
+                            <td>Corte & Penteado</td>
+                            <td>25/11/2025</td>
+                            <td>10:00</td>
+                            <td><span class="status-badge status-pendente">Pendente</span></td>
+                            <td>
+                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>João Santos</td>
+                            <td>+351 918 765 432</td>
+                            <td>Coloração</td>
+                            <td>26/11/2025</td>
+                            <td>14:00</td>
+                            <td><span class="status-badge status-confirmada">Confirmada</span></td>
+                            <td>
+                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>+351 925 678 901</td>
+                            <td>Tratamentos</td>
+                            <td>27/11/2025</td>
+                            <td>16:00</td>
+                            <td><span class="status-badge status-pendente">Pendente</span></td>
+                            <td>
+                                <button class="admin-action-btn btn-confirmar" onclick="confirmarMarcacao(this)">Confirmar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Produtos -->
+        <div class="admin-tab-content" id="adminProdutosTab">
+            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">➕ Adicionar Produto</h2>
+            <form class="product-form" onsubmit="adicionarProduto(event)">
+                <div class="form-group">
+                    <label>Nome do Produto</label>
+                    <input type="text" id="produtoNome" required placeholder="Ex: Shampoo Premium">
+                </div>
+                <div class="form-group">
+                    <label>Preço (€)</label>
+                    <input type="number" id="produtoPreco" step="0.01" required placeholder="19.99">
+                </div>
+                <div class="form-group full-width">
+                    <label>Descrição</label>
+                    <input type="text" id="produtoDesc" required placeholder="Descrição do produto">
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="submit-btn">➕ Adicionar Produto</button>
+                </div>
+            </form>
+
+            <h2 style="margin: 50px 0 25px; font-family: 'Playfair Display', serif; color: #333;">📦 Produtos Cadastrados</h2>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Preço</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="produtosTableBody">
+                        <tr>
+                            <td>Shampoo Premium</td>
+                            <td>€19.99</td>
+                            <td>Shampoo profissional para todos os tipos de cabelo</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Editar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Condicionador Hidratante</td>
+                            <td>€24.99</td>
+                            <td>Condicionador com óleo de argan</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Editar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Máscara Capilar</td>
+                            <td>€29.99</td>
+                            <td>Tratamento intensivo para cabelos danificados</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Editar</button>
+                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Clientes -->
+        <div class="admin-tab-content" id="adminClientesTab">
+            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">👥 Clientes Registados</h2>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Data Registo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientesTableBody">
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>maria.silva@email.pt</td>
+                            <td>+351 912 345 678</td>
+                            <td>15/11/2025</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>João Santos</td>
+                            <td>joao.santos@email.pt</td>
+                            <td>+351 918 765 432</td>
+                            <td>10/11/2025</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>ana.costa@email.pt</td>
+                            <td>+351 925 678 901</td>
+                            <td>05/11/2025</td>
+                            <td>
+                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Estatísticas -->
+        <div class="admin-tab-content" id="adminEstatisticasTab">
+            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📊 Estatísticas do Sistema</h2>
+            <div class="stats-grid">
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">⏳</div>
+                    <h3>12</h3>
+                    <p>Marcações Pendentes</p>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">✅</div>
+                    <h3>45</h3>
+                    <p>Marcações Confirmadas</p>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">📦</div>
+                    <h3>8</h3>
+                    <p>Produtos Cadastrados</p>
+                </div>
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">👥</div>
+                    <h3>127</h3>
+                    <p>Clientes Registados</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <h3 style="font-family: 'Playfair Display', serif; color: #333; margin-bottom: 20px;">📈 Resumo Mensal</h3>
+                <div class="stats-grid">
+                    <div class="stat-card-simple">
+                        <strong>Receita Total</strong>
+                        <p style="font-size: 1.8rem; color: #28a745; margin-top: 10px;">€3,450</p>
+                    </div>
+                    <div class="stat-card-simple">
+                        <strong>Serviços Realizados</strong>
+                        <p style="font-size: 1.8rem; color: #17a2b8; margin-top: 10px;">78</p>
+                    </div>
+                    <div class="stat-card-simple">
+                        <strong>Novos Clientes</strong>
+                        <p style="font-size: 1.8rem; color: #c89238; margin-top: 10px;">23</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Verificar se é admin ao carregar página
+        window.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('flashUser') || 'null');
+            
+            if (!user || user.role !== 'admin') {
+                alert('❌ Acesso negado! Esta área é apenas para administradores.');
+                window.location.href = 'index.html';
+            } else {
+                // Atualizar informações do usuário
+                document.getElementById('userInitials').textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+            }
+        });
+    </script>
+</body>
+</html>

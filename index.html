@@ -11,16 +11,34 @@
     <header>
         <div class="center">
             <div class="logo">
-                <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+                <a href="index.html">
+                    <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+                </a>
             </div>
             
             <div class="menu" id="menu">
-                <a href="#inicio">Início</a>
-                <a href="#servicos">Serviços</a>
+                <a href="index.html">Início</a>
+                <a href="servicos.html">Serviços</a>
                 <a href="loja.html">Loja</a>
                 <a href="marcacoes.html">Marcações</a>
                 <a href="#contactos">Contactos</a>
+                <a href="login.html">Login</a>
+            </div>
+
+            <!-- Menu do usuário logado -->
+            <div class="user-avatar-menu" id="userAvatarMenu" style="display: none;">
+                <div class="user-avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">U</span>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <strong id="userName">Utilizador</strong>
+                        <span id="userEmail">user@email.pt</span>
+                    </div>
+                    <a href="admin.html" id="adminLink" style="display: none;">⚙️ Painel Admin</a>
+                    <a href="#" onclick="logout()">🚪 Sair</a>
+                </div>
             </div>
             
             <div class="icon">
@@ -56,7 +74,6 @@
         </div>
     </section>
 
-
     <section class="section contact" id="contactos">
         <div class="center">
             <h2 class="section-title">Contactos</h2>
@@ -75,7 +92,7 @@
                     info@flashcabeleireiro.pt
                 </div>
                 <div class="contact-item">
-                    <strong>🕒 Horário:</strong><br>
+                    <strong>🕐 Horário:</strong><br>
                     Segunda a Sexta: 9h - 19h<br>
                     Sábado: 9h - 17h<br>
                     Domingo: Fechado
