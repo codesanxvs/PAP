@@ -6,15 +6,8 @@
     <title>Loja - Flash Cabeleireiro</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
-    <!-- SNIPCART - E-commerce Headless -->
-    <link rel="preconnect" href="https://app.snipcart.com">
-    <link rel="preconnect" href="https://cdn.snipcart.com">
-    <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.css" />
 </head>
 <body>
-    <!-- SNIPCART - Container (coloque sua API key) -->
-    <div hidden id="snipcart" data-api-key="COLE_AQUI_SUA_SNIPCART_API_KEY" data-config-modal-style="side" data-currency="eur"></div>
 
     <header>
         <div class="center">
@@ -24,288 +17,115 @@
                     <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
                 </a>
             </div>
-            
-            <div class="menu" id="menu">
+
+            <nav class="menu" id="menu">
                 <a href="index.html">Início</a>
                 <a href="index.html#servicos">Serviços</a>
                 <a href="loja.html" class="active">Loja</a>
                 <a href="marcacoes.html">Marcações</a>
                 <a href="index.html#contactos">Contactos</a>
-                <a href="login.html">Login</a>
-                <!-- Botão Carrinho Snipcart -->
-                <a href="#" class="snipcart-checkout cart-button">
-                    🛒 <span class="snipcart-items-count"></span>
-                </a>
-            </div>
-
-            <!-- Menu do usuário logado -->
-            <div class="user-avatar-menu" id="userAvatarMenu" style="display: none;">
-                <button class="snipcart-checkout cart-icon-header">
-                    🛒
-                    <span class="snipcart-items-count cart-badge-header"></span>
-                </button>
-                <div class="user-avatar" onclick="toggleUserDropdown()">
-                    <span id="userInitials">U</span>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    <div class="user-info">
-                        <strong id="userName">Utilizador</strong>
-                        <span id="userEmail">user@email.pt</span>
-                    </div>
-                    <a href="admin.html" id="adminLink" style="display: none;">⚙️ Painel Admin</a>
-                    <a href="#" onclick="logout()">🚪 Sair</a>
-                </div>
-            </div>
-            
-            <div class="icon">
-                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
-            </div>
+            </nav>
         </div>
     </header>
 
-    <!-- Hero Section da Loja -->
     <section class="loja-hero">
         <div class="center">
             <div class="loja-hero-content">
-                <h1><span class="highlight">Nossa</span><br>Loja Online</h1>
-                <p>Produtos profissionais para cuidar do seu cabelo em casa.</p>
+                <h1><span class="highlight">A Nossa</span><br>Loja Física</h1>
+                <p>Explore a nossa gama de produtos profissionais selecionados para si.</p>
             </div>
         </div>
     </section>
 
-    <!-- Produtos -->
-    <section class="section produtos-section">
-        <div class="center">
-            <h2 class="section-title">✨ Nossos Produtos</h2>
+    <section class="sugestoes-section section">
+        <div class="center" style="flex-direction: column;">
             
-            <div class="produtos-grid">
-                <!-- Produto 1 - Shampoo Premium -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/shampoo.jpg" alt="Shampoo Premium" onerror="this.src='https://via.placeholder.com/400x400/c89238/ffffff?text=Shampoo+Premium'">
-                        <span class="produto-badge">Novidade</span>
+            <h2 class="section-title">✨ Nossos Produtos</h2>
+
+            <div class="sugestoes-grid" id="sugestoesGrid">
+
+                <div class="produto-card-novo">
+                    <div class="produto-img-wrap">
+                        <span class="badge-status badge-novidade">Novidade</span>
+                        <img src="assets/olaplex4.jpg" alt="Olaplex N.4" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Olaplex+N.4'">
                     </div>
-                    <div class="produto-info">
-                        <h3>Shampoo Premium</h3>
-                        <p class="produto-desc">Shampoo profissional para todos os tipos de cabelo. Fórmula hidratante com extratos naturais.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€19.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="shampoo-premium-001"
-                                data-item-price="19.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Shampoo profissional hidratante"
-                                data-item-image="https://via.placeholder.com/400x400/c89238/ffffff?text=Shampoo"
-                                data-item-name="Shampoo Premium"
-                                data-item-custom1-name="Tamanho"
-                                data-item-custom1-options="250ml|500ml[+5.00]|1L[+10.00]">
-                                🛒 Adicionar
-                            </button>
+                    <div class="produto-info-novo">
+                        <p class="produto-nome">Olaplex N.4 Shampoo (250ml)</p>
+                        <div class="produto-preco-wrap">
+                            <span class="preco-final">22.50 €</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Produto 2 - Condicionador -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/condicionador.jpg" alt="Condicionador Hidratante" onerror="this.src='https://via.placeholder.com/400x400/bd8a30/ffffff?text=Condicionador'">
+                <div class="produto-card-novo">
+                    <div class="produto-img-wrap">
+                        <span class="badge-status badge-vendido">Mais Vendido</span>
+                        <img src="assets/olaplex7.jpg" alt="Olaplex N.7" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Olaplex+N.7'">
                     </div>
-                    <div class="produto-info">
-                        <h3>Condicionador Hidratante</h3>
-                        <p class="produto-desc">Condicionador com óleo de argan. Máxima hidratação e brilho intenso.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€24.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="condicionador-hidratante-002"
-                                data-item-price="24.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Condicionador com óleo de argan"
-                                data-item-image="https://via.placeholder.com/400x400/bd8a30/ffffff?text=Condicionador"
-                                data-item-name="Condicionador Hidratante"
-                                data-item-custom1-name="Tamanho"
-                                data-item-custom1-options="250ml|500ml[+6.00]">
-                                🛒 Adicionar
-                            </button>
+                    <div class="produto-info-novo">
+                        <p class="produto-nome">Olaplex N.7 Bonding Oil (30ml)</p>
+                        <div class="produto-preco-wrap">
+                            <span class="preco-final">23.90 €</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Produto 3 - Máscara Capilar -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/mascara.jpg" alt="Máscara Capilar" onerror="this.src='https://via.placeholder.com/400x400/d4af37/ffffff?text=Mascara+Capilar'">
-                        <span class="produto-badge best">Mais Vendido</span>
+                <div class="produto-card-novo">
+                    <div class="produto-img-wrap">
+                        <img src="assets/tigi-serial-blonde.jpg" alt="TIGI" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=TIGI'">
                     </div>
-                    <div class="produto-info">
-                        <h3>Máscara Capilar</h3>
-                        <p class="produto-desc">Tratamento intensivo para cabelos danificados. Recuperação profunda em minutos.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€29.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="mascara-capilar-003"
-                                data-item-price="29.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Tratamento intensivo reparador"
-                                data-item-image="https://via.placeholder.com/400x400/d4af37/ffffff?text=Mascara"
-                                data-item-name="Máscara Capilar Reparadora"
-                                data-item-custom1-name="Tamanho"
-                                data-item-custom1-options="300ml|500ml[+8.00]">
-                                🛒 Adicionar
-                            </button>
+                    <div class="produto-info-novo">
+                        <p class="produto-nome">TIGI Bed Head Serial Blonde (400ml)</p>
+                        <div class="produto-preco-wrap">
+                            <span class="preco-final">9.00 €</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Produto 4 - Óleo Reparador -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/oleo.jpg" alt="Óleo Reparador" onerror="this.src='https://via.placeholder.com/400x400/c89238/ffffff?text=Oleo+Reparador'">
+                <div class="produto-card-novo">
+                    <div class="produto-img-wrap">
+                        <img src="assets/loreal-curl.jpg" alt="L'Oréal" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Loreal'">
                     </div>
-                    <div class="produto-info">
-                        <h3>Óleo Reparador</h3>
-                        <p class="produto-desc">Óleo de argan puro 100%. Reparação instantânea e brilho para pontas duplas.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€34.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="oleo-reparador-004"
-                                data-item-price="34.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Óleo de argan 100% puro"
-                                data-item-image="https://via.placeholder.com/400x400/c89238/ffffff?text=Oleo"
-                                data-item-name="Óleo Reparador de Argan"
-                                data-item-custom1-name="Tamanho"
-                                data-item-custom1-options="50ml|100ml[+10.00]">
-                                🛒 Adicionar
-                            </button>
+                    <div class="produto-info-novo">
+                        <p class="produto-nome">L'Oréal Curl Expression Spray (190ml)</p>
+                        <div class="produto-preco-wrap">
+                            <span class="preco-final">19.50 €</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Produto 5 - Sérum Anti-Frizz -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/serum.jpg" alt="Sérum Anti-Frizz" onerror="this.src='https://via.placeholder.com/400x400/bd8a30/ffffff?text=Serum+Anti-Frizz'">
-                    </div>
-                    <div class="produto-info">
-                        <h3>Sérum Anti-Frizz</h3>
-                        <p class="produto-desc">Controla o frizz e proporciona acabamento suave. Proteção térmica incluída.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€27.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="serum-antifrizz-005"
-                                data-item-price="27.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Sérum controlador de frizz"
-                                data-item-image="https://via.placeholder.com/400x400/bd8a30/ffffff?text=Serum"
-                                data-item-name="Sérum Anti-Frizz Professional"
-                                data-item-custom1-name="Tamanho"
-                                data-item-custom1-options="100ml|200ml[+7.00]">
-                                🛒 Adicionar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produto 6 - Spray Fixador -->
-                <div class="produto-card">
-                    <div class="produto-image">
-                        <img src="assets/spray.jpg" alt="Spray Fixador" onerror="this.src='https://via.placeholder.com/400x400/d4af37/ffffff?text=Spray+Fixador'">
-                    </div>
-                    <div class="produto-info">
-                        <h3>Spray Fixador Profissional</h3>
-                        <p class="produto-desc">Fixação forte e duradoura. Ideal para penteados elaborados e eventos.</p>
-                        <div class="produto-footer">
-                            <span class="produto-preco">€22.99</span>
-                            <button 
-                                class="snipcart-add-item btn-add-cart"
-                                data-item-id="spray-fixador-006"
-                                data-item-price="22.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Spray fixador profissional"
-                                data-item-image="https://via.placeholder.com/400x400/d4af37/ffffff?text=Spray"
-                                data-item-name="Spray Fixador Strong Hold"
-                                data-item-custom1-name="Fixação"
-                                data-item-custom1-options="Média|Forte[+2.00]|Extra Forte[+4.00]">
-                                🛒 Adicionar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Produto 7 - Kit Completo (Exemplo de Bundle) -->
-                <div class="produto-card produto-destaque">
-                    <div class="produto-image">
-                        <img src="assets/kit.jpg" alt="Kit Completo" onerror="this.src='https://via.placeholder.com/400x400/28a745/ffffff?text=Kit+Completo'">
-                        <span class="produto-badge promo">-20% OFF</span>
-                    </div>
-                    <div class="produto-info">
-                        <h3>🎁 Kit Completo Flash</h3>
-                        <p class="produto-desc">Kit com Shampoo + Condicionador + Máscara. Economia de €20!</p>
-                        <div class="produto-footer">
-                            <div class="preco-group">
-                                <span class="produto-preco-antigo">€74.97</span>
-                                <span class="produto-preco">€59.99</span>
-                            </div>
-                            <button 
-                                class="snipcart-add-item btn-add-cart btn-kit"
-                                data-item-id="kit-completo-007"
-                                data-item-price="59.99"
-                                data-item-url="/loja.html"
-                                data-item-description="Kit completo: Shampoo + Condicionador + Máscara"
-                                data-item-image="https://via.placeholder.com/400x400/28a745/ffffff?text=Kit"
-                                data-item-name="Kit Completo Flash Care">
-                                🎁 Adicionar Kit
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Banner Envio Grátis -->
-            <div class="shipping-banner">
-                <h3>🚚 Envio GRÁTIS em compras acima de €50</h3>
-                <p>Receba em 2-3 dias úteis em todo Portugal Continental</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <section class="section contact">
             <div class="center">
                 <h2 class="section-title">Contactos</h2>
                 <div class="contact-info">
-                    <div class="contact-item">
-                        <strong>📍 Morada:</strong><br>
-                        Avenida 9 Abril 5 – Pontével<br>
-                        2070-376 Pontével (Cartaxo)
-                    </div>
-                    <div class="contact-item">
-                        <strong>📞 Telefone:</strong><br>
-                        +351 243 123 456
-                    </div>
-                    <div class="contact-item">
-                        <strong>✉️ Email:</strong><br>
-                        info@flashcabeleireiro.pt
-                    </div>
-                    <div class="contact-item">
-                        <strong>🕐 Horário:</strong><br>
-                        Segunda a Sexta: 9h - 19h<br>
-                        Sábado: 9h - 17h<br>
-                        Domingo: Fechado
-                    </div>
+                    <div class="contact-item"><strong>📍 Localização:</strong><br>Avenida 9 Abril 5 – Pontével</div>
+                    <div class="contact-item"><strong>📞 Telefone:</strong><br>+351 243 123 456</div>
                 </div>
             </div>
         </section>
     </footer>
 
-    <!-- SNIPCART Script -->
-    <script async src="https://cdn.snipcart.com/themes/v3.7.1/default/snipcart.js"></script>
-    <script src="script.js"></script>
+    <button class="scroll-top-btn" id="scrollTopBtn" title="Voltar ao topo">↑</button>
+
+    <script>
+        // Reveal animation
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        sections.forEach(s => observer.observe(s));
+
+        // Scroll to top button
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        window.addEventListener('scroll', () => {
+            scrollBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+        });
+        scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
 </body>
 </html>
