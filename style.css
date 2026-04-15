@@ -1265,3 +1265,172 @@ section.sobre {
     .sugestoes-section .section-title { font-size: 2.2rem; }
 }
 @media (max-width: 480px) { .sugestoes-grid { grid-template-columns: 1fr; } }
+
+/* ========== PÁGINA SERVIÇOS  ========== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+.main-services {
+    margin-top: 220px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* HERO */
+.services-hero {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.services-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #1a1a1a;
+}
+
+.services-hero p {
+    font-weight: 300;
+    color: #777;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+/* TÍTULOS DAS SECÇÕES */
+.main-services .category-header {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #c89238;
+    margin: 60px 0 20px;
+    border-bottom: 2px solid #c89238;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+/* TABELA */
+.sanjam-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 50px;
+    table-layout: fixed; /* resolve desalinhamento */
+}
+
+.sanjam-table th,
+.sanjam-table td {
+    padding: 15px;
+    text-align: center;
+    width: 25%;
+}
+
+.sanjam-table th {
+    background: #f9f9f9;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.sanjam-table td {
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+.sanjam-table td:first-child,
+.sanjam-table th:first-child {
+    text-align: left;
+}
+
+/* PREÇOS */
+.price-tag {
+    font-weight: 700;
+    color: #c89238;
+    font-variant-numeric: tabular-nums; /* alinha números */
+}
+
+/* GRID ESTÉTICA */
+.grid-estetica {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.col-estetica {
+    background: #fff;
+}
+
+.col-estetica h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.item-estetica {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.9rem;
+}
+
+.item-estetica span:last-child {
+    color: #c89238;
+    font-weight: 700;
+}
+
+/* BOTÃO */
+.booking-section {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.btn-sanjam-style {
+    display: inline-block;
+    padding: 15px 40px;
+    border: 2px solid #c89238;
+    color: #c89238;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.btn-sanjam-style:hover {
+    background: #c89238;
+    color: white;
+}
+
+/* FOOTER */
+.services-footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 40px 0;
+    color: #999;
+    font-size: 0.8rem;
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+    .grid-estetica {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-estetica {
+        grid-template-columns: 1fr;
+    }
+
+    .services-hero h1 {
+        font-size: 2rem;
+    }
+
+    .main-services {
+        padding: 0 15px;
+    }
+}
