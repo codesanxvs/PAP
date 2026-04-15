@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Serviços - Flash Cabeleireiro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Flash Cabeleireiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
         <div class="center">
             <div class="logo">
@@ -17,108 +16,91 @@
                     <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
                 </a>
             </div>
-            <nav class="menu">
+            
+            <div class="menu" id="menu">
                 <a href="index.html">Início</a>
-                <a href="servicos.html" class="active">Serviços</a>
+                <a href="servicos.html">Serviços</a>
                 <a href="loja.html">Loja</a>
                 <a href="marcacoes.html">Marcações</a>
-                <a href="index.html#contactos">Contactos</a>
-            </nav>
+                <a href="#contactos">Contactos</a>
+                <a href="login.html">Login</a>
+            </div>
+
+            <!-- Menu do usuário logado -->
+            <div class="user-avatar-menu" id="userAvatarMenu" style="display: none;">
+                <div class="user-avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">U</span>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <strong id="userName">Utilizador</strong>
+                        <span id="userEmail">user@email.pt</span>
+                    </div>
+                    <a href="admin.html" id="adminLink" style="display: none;">⚙️ Painel Admin</a>
+                    <a href="#" onclick="logout()">🚪 Sair</a>
+                </div>
+            </div>
+            
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
         </div>
     </header>
 
-    <main class="main-services">
+    <section class="sobre" id="inicio">
+        <div class="hair-tools">
+            <div class="tool">✂️</div>
+            <div class="tool">💄</div>
+            <div class="tool">🪒</div>
+            <div class="tool">✨</div>
+        </div>
         
-        <div class="services-hero">
-            <h1>Menu de Serviços</h1>
-            <p>A excelência e o cuidado que o seu cabelo merece.</p>
-        </div>
-
-        <div class="table-wrapper">
-            
-            <h2 class="category-header">Cabeleireiro</h2>
-            <table class="sanjam-table">
-                <thead>
-                    <tr>
-                        <th>Serviços de Cabelo</th>
-                        <th>Curto</th>
-                        <th>Médio</th>
-                        <th>Comprido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Corte</td><td class="price-tag">7,50 €</td><td class="price-tag">8,50 €</td><td class="price-tag">8,50 €</td></tr>
-                    <tr><td>Brushing</td><td class="price-tag">8,50 €</td><td class="price-tag">8,50 €</td><td class="price-tag">10,00 €</td></tr>
-                    <tr><td>Mise</td><td class="price-tag">8,00 €</td><td class="price-tag">8,00 €</td><td class="price-tag">8,50 €</td></tr>
-                    <tr><td>Coloração</td><td class="price-tag">22,00 €</td><td class="price-tag">24,00 €</td><td class="price-tag">27,00 €</td></tr>
-                    <tr><td>Descoloração</td><td class="price-tag">24,00 €</td><td class="price-tag">25,50 €</td><td class="price-tag">27,00 €</td></tr>
-                    <tr><td>Permanente / Desfrisagem</td><td class="price-tag">24,00 €</td><td class="price-tag">25,00 €</td><td class="price-tag">27,50 €</td></tr>
-                    <tr><td>Madeixas / Nuances</td><td class="price-tag">25,00 €</td><td class="price-tag">26,00 €</td><td class="price-tag">28,00 €</td></tr>
-                    <tr><td>Madeixas / Nuances c/ Prata</td><td class="price-tag">29,00 €</td><td class="price-tag">35,00 €</td><td class="price-tag">40,00 €</td></tr>
-                </tbody>
-            </table>
-
-            <h2 class="category-header">Estética & Bem-Estar</h2>
-            <div class="grid-estetica">
-                
-                <div class="col-estetica">
-                    <h3>Tratamentos de Rosto</h3>
-                    <div class="item-estetica"><span>Limpeza de Pele Profunda</span> <span>35,00 €</span></div>
-                    <div class="item-estetica"><span>Tratamento Hidratação</span> <span>25,00 €</span></div>
-                    <div class="item-estetica"><span>Massagem Facial</span> <span>15,00 €</span></div>
-                </div>
-
-                <div class="col-estetica">
-                    <h3>Unhas (Mãos e Pés)</h3>
-                    <div class="item-estetica"><span>Manicure Simples</span> <span>10,00 €</span></div>
-                    <div class="item-estetica"><span>Pedicure Especializada</span> <span>18,00 €</span></div>
-                    <div class="item-estetica"><span>Verniz Gel</span> <span>15,00 €</span></div>
-                    <div class="item-estetica"><span>Gelinho</span> <span>12,00 €</span></div>
-                    <div class="item-estetica"><span>Manicure + Pedicure</span> <span>25,00 €</span></div>
-                </div>
-
-                <div class="col-estetica">
-                    <h3>Depilação Facial</h3>
-                    <div class="item-estetica"><span>Sobrancelhas (Design)</span> <span>5,00 €</span></div>
-                    <div class="item-estetica"><span>Buço</span> <span>4,00 €</span></div>
-                    <div class="item-estetica"><span>Rosto Total</span> <span>12,00 €</span></div>
-                </div>
-
-                <div class="col-estetica">
-                    <h3>Depilação Corporal</h3>
-                    <div class="item-estetica"><span>Axilas</span> <span>6,00 €</span></div>
-                    <div class="item-estetica"><span>Braços</span> <span>10,00 €</span></div>
-                    <div class="item-estetica"><span>Costas / Peito (Homem)</span> <span>15,00 €</span></div>
-                    <div class="item-estetica"><span>Virilha (Simples)</span> <span>8,00 €</span></div>
-                </div>
-
-                <div class="col-estetica">
-                    <h3>Depilação Pernas</h3>
-                    <div class="item-estetica"><span>Meia Perna</span> <span>10,00 €</span></div>
-                    <div class="item-estetica"><span>Perna Inteira</span> <span>16,00 €</span></div>
-                </div>
-
-                <div class="col-estetica">
-                    <h3>Barbearia</h3>
-                    <div class="item-estetica"><span>Corte Homem</span> <span>10,00 €</span></div>
-                    <div class="item-estetica"><span>Barba (Design)</span> <span>5,00 €</span></div>
-                    <div class="item-estetica"><span>Corte e Barba</span> <span>14,00 €</span></div>
-                </div>
-
+        <div class="extras"></div>
+        
+        <div class="center">
+            <div class="texto-sobre">
+                <h1><span class="highlight">Venha cuidar</span><br>do seu cabelo</h1>
+                <p>Transforme o seu visual com os nossos serviços profissionais de cabeleireiro. Experiência, qualidade e dedicação em cada corte.</p>
             </div>
-
-            <div class="booking-section">
-                <a href="marcacoes.html" class="btn-sanjam-style">
-                    Fazer Marcação Online
-                </a>
-            </div>
-
         </div>
-    </main>
+    </section>
 
-    <footer class="services-footer">
-        <p>&copy; 2026 Flash Cabeleireiro. Avenida 9 Abril 5 – Pontével.</p>
-    </footer>
+    <!-- Imagem da Loja -->
+    <section class="section loja-showcase">
+        <div class="center">
+            <div class="loja-showcase-container">
+                <img src="assets/Cabeleireiro.jfif" alt="Flash Cabeleireiro - Nosso Cabeleireiro" class="loja-showcase-image">
+            </div>
+        </div>
+    </section>
 
+    <section class="section contact" id="contactos">
+        <div class="center">
+            <h2 class="section-title">Contactos</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <strong>📍 Morada:</strong><br>
+                    Avenida 9 Abril 5 – Pontével<br>
+                    2070-376 Pontével (Cartaxo)
+                </div>
+                <div class="contact-item">
+                    <strong>📞 Telefone:</strong><br>
+                    +351 243 123 456
+                </div>
+                <div class="contact-item">
+                    <strong>✉️ Email:</strong><br>
+                    info@flashcabeleireiro.pt
+                </div>
+                <div class="contact-item">
+                    <strong>🕐 Horário:</strong><br>
+                    Segunda a Sexta: 9h - 19h<br>
+                    Sábado: 9h - 17h<br>
+                    Domingo: Fechado
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
 </body>
 </html>
