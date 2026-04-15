@@ -94,10 +94,10 @@
                                 </optgroup>
 
                                 <optgroup label="Unhas">
-                                    <option value="Embelezamento de mãos (sem verniz)">Embelezamento de mãos (sem verniz)</option>
-                                    <option value="Embelezamento de mãos (com verniz)">Embelezamento de mãos (com verniz)</option>
-                                    <option value="Embelezamento de pés (sem verniz)">Embelezamento de pés (sem verniz)</option>
-                                    <option value="Embelezamento de pés (com verniz)">Embelezamento de pés (com verniz)</option>
+                                    <option value="Mãos (sem verniz)">Embelezamento de mãos (sem verniz)</option>
+                                    <option value="Mãos (com verniz)">Embelezamento de mãos (com verniz)</option>
+                                    <option value="Pés (sem verniz)">Embelezamento de pés (sem verniz)</option>
+                                    <option value="Pés (com verniz)">Embelezamento de pés (com verniz)</option>
                                 </optgroup>
 
                                 <optgroup label="Depilação Facial">
@@ -107,7 +107,7 @@
                                     <option value="Rosto">Rosto</option>
                                 </optgroup>
 
-                                <optgroup label="Depilação Corporal">
+                                <optgroup label="Depilação Corporal & Pernas">
                                     <option value="Axilas">Axilas</option>
                                     <option value="Virilhas">Virilhas</option>
                                     <option value="Virilhas cavadas">Virilhas cavadas</option>
@@ -128,7 +128,7 @@
                         <div class="form-group">
                             <label for="hora">Hora Preferida *</label>
                             <select id="hora" name="hora" required>
-                                <option value="">Selecione o horário</option>
+                                <option value="">Horário</option>
                                 <option value="09:00">09:00</option>
                                 <option value="10:00">10:00</option>
                                 <option value="11:00">11:00</option>
@@ -144,7 +144,7 @@
 
                     <div class="form-group">
                         <label for="observacoes">Observações</label>
-                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional (ex: tamanho do cabelo)..."></textarea>
+                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional..."></textarea>
                     </div>
 
                     <div class="form-actions">
@@ -175,32 +175,26 @@
             btnLoader.style.display = 'inline';
             
             const formData = new FormData(this);
-            const data = {
-                nome: formData.get('nome'),
-                telefone: formData.get('telefone'),
-                email: formData.get('email'),
-                servico: formData.get('servico'),
-                data: formData.get('data'),
-                hora: formData.get('hora'),
-                observacoes: formData.get('observacoes') || ''
-            };
+            const data = Object.fromEntries(formData.entries());
             
             try {
                 const cleanUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
                 
-                // 1. Verificar se o horário já está ocupado no servidor
+                // 1. Verificar se o horário já está ocupado
                 const checkResponse = await fetch(`${cleanUrl}/api/marcacoes/verificar?data=${data.data}&hora=${data.hora}`);
-                const checkResult = await checkResponse.json();
-
-                if (checkResult.exists || !checkResult.disponivel) {
-                    alert(`⚠️ Atenção: O horário das ${data.hora} no dia ${data.data} já se encontra reservado. Por favor, selecione outro horário.`);
-                    submitBtn.disabled = false;
-                    btnText.style.display = 'inline';
-                    btnLoader.style.display = 'none';
-                    return;
+                
+                if (checkResponse.ok) {
+                    const checkResult = await checkResponse.json();
+                    if (checkResult.exists) {
+                        alert(`⚠️ O horário das ${data.hora} no dia ${data.data} já está reservado. Por favor, escolha outra hora.`);
+                        submitBtn.disabled = false;
+                        btnText.style.display = 'inline';
+                        btnLoader.style.display = 'none';
+                        return;
+                    }
                 }
 
-                // 2. Se estiver livre, envia a marcação
+                // 2. Enviar a marcação
                 const response = await fetch(`${cleanUrl}/api/marcacoes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -210,15 +204,15 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert(`✅ Marcação enviada com sucesso!\n\nObrigado, ${data.nome}!\nEntraremos em contacto em breve para confirmar.`);
+                    alert(`✅ Marcação enviada com sucesso!\nObrigado, ${data.nome}.`);
                     this.reset();
                 } else {
-                    throw new Error(result.message || 'Erro ao processar marcação');
+                    throw new Error(result.message || 'Erro ao processar');
                 }
 
             } catch (error) {
                 console.error('Erro:', error);
-                alert(`❌ Erro de ligação!\n\nNão foi possível verificar a disponibilidade. Tente novamente mais tarde.`);
+                alert(`❌ Erro ao processar a marcação. Tente novamente mais tarde.`);
             } finally {
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline';
