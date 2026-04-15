@@ -19,11 +19,10 @@
             
             <div class="menu" id="menu">
                 <a href="index.html">Início</a>
-                <a href="index.html#servicos">Serviços</a>
+                <a href="servicos.html">Serviços</a>
                 <a href="loja.html">Loja</a>
                 <a href="marcacoes.html" class="active">Marcações</a>
                 <a href="index.html#contactos">Contactos</a>
-                <a href="auth.html">Login</a>
             </div>
             
             <div class="icon">
@@ -69,10 +68,53 @@
                             <label for="servico">Serviço Pretendido *</label>
                             <select id="servico" name="servico" required>
                                 <option value="">Selecione um serviço</option>
-                                <option value="Corte & Penteado">Corte & Penteado</option>
-                                <option value="Coloração">Coloração</option>
-                                <option value="Tratamentos">Tratamentos</option>
-                                <option value="Eventos Especiais">Eventos Especiais</option>
+                                
+                                <optgroup label="Cabeleireiro">
+                                    <option value="Corte">Corte</option>
+                                    <option value="Brushing">Brushing</option>
+                                    <option value="Mise">Mise</option>
+                                    <option value="Coloração">Coloração</option>
+                                    <option value="Descoloração">Descoloração</option>
+                                    <option value="Permanente">Permanente</option>
+                                    <option value="Desfrisagem">Desfrisagem</option>
+                                    <option value="Madeixas">Madeixas</option>
+                                    <option value="Madeixas c/ Prata">Madeixas c/ Prata</option>
+                                    <option value="Nuances">Nuances</option>
+                                    <option value="Nuances c/ Prata">Nuances c/ Prata</option>
+                                    <option value="Shampoo Especial">Shampoo Especial</option>
+                                    <option value="Creme Normal">Creme Normal</option>
+                                    <option value="Máscaras">Máscaras</option>
+                                    <option value="Espuma">Espuma</option>
+                                    <option value="Ampolas Tratamento">Ampolas Tratamento</option>
+                                </optgroup>
+
+                                <optgroup label="Estética & Rosto">
+                                    <option value="Limpeza de pele">Limpeza de pele</option>
+                                    <option value="Maquilhagem">Maquilhagem</option>
+                                </optgroup>
+
+                                <optgroup label="Unhas">
+                                    <option value="Embelezamento de mãos (sem verniz)">Embelezamento de mãos (sem verniz)</option>
+                                    <option value="Embelezamento de mãos (com verniz)">Embelezamento de mãos (com verniz)</option>
+                                    <option value="Embelezamento de pés (sem verniz)">Embelezamento de pés (sem verniz)</option>
+                                    <option value="Embelezamento de pés (com verniz)">Embelezamento de pés (com verniz)</option>
+                                </optgroup>
+
+                                <optgroup label="Depilação Facial">
+                                    <option value="Sobrancelhas">Sobrancelhas</option>
+                                    <option value="Buço">Buço</option>
+                                    <option value="Buço e Queixo">Buço e Queixo</option>
+                                    <option value="Rosto">Rosto</option>
+                                </optgroup>
+
+                                <optgroup label="Depilação Corporal">
+                                    <option value="Axilas">Axilas</option>
+                                    <option value="Virilhas">Virilhas</option>
+                                    <option value="Virilhas cavadas">Virilhas cavadas</option>
+                                    <option value="Virilhas completas">Virilhas completas</option>
+                                    <option value="Meia Perna (MP)">Meia Perna (MP)</option>
+                                    <option value="Perna Inteira (PI)">Perna Inteira (PI)</option>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
@@ -102,13 +144,13 @@
 
                     <div class="form-group">
                         <label for="observacoes">Observações</label>
-                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional que queira partilhar..."></textarea>
+                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional (ex: tamanho do cabelo)..."></textarea>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn-submit" id="submitBtn">
                             <span id="btnText">Enviar Pedido de Marcação</span>
-                            <span id="btnLoader" style="display: none;">⏳ Enviando...</span>
+                            <span id="btnLoader" style="display: none;">⏳ Verificando disponibilidade...</span>
                         </button>
                         <p class="form-note">* Entraremos em contacto para confirmar a sua marcação</p>
                     </div>
@@ -119,7 +161,6 @@
 
     <script src="script.js"></script>
     <script>
-        // ALTERAÇÃO AQUI: Coloca o link do teu Render entre as aspas abaixo
         const API_URL = 'https://meu-servidor-p9g9.onrender.com'; 
 
         document.getElementById('marcacaoForm').addEventListener('submit', async function(e) {
@@ -145,9 +186,21 @@
             };
             
             try {
-                // Remove barras extras se o link já tiver uma no final
                 const cleanUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
                 
+                // 1. Verificar se o horário já está ocupado no servidor
+                const checkResponse = await fetch(`${cleanUrl}/api/marcacoes/verificar?data=${data.data}&hora=${data.hora}`);
+                const checkResult = await checkResponse.json();
+
+                if (checkResult.exists || !checkResult.disponivel) {
+                    alert(`⚠️ Atenção: O horário das ${data.hora} no dia ${data.data} já se encontra reservado. Por favor, selecione outro horário.`);
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+                    return;
+                }
+
+                // 2. Se estiver livre, envia a marcação
                 const response = await fetch(`${cleanUrl}/api/marcacoes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -157,15 +210,15 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert(`✅ Marcação criada com sucesso!\n\nObrigado, ${data.nome}!\n\nEntraremos em contacto em breve.\n📅 ${data.data} ⏰ ${data.hora} 💇 ${data.servico}`);
+                    alert(`✅ Marcação enviada com sucesso!\n\nObrigado, ${data.nome}!\nEntraremos em contacto em breve para confirmar.`);
                     this.reset();
                 } else {
-                    throw new Error(result.message || 'Erro ao criar marcação');
+                    throw new Error(result.message || 'Erro ao processar marcação');
                 }
 
             } catch (error) {
                 console.error('Erro:', error);
-                alert(`❌ Erro ao enviar marcação!\n\n${error.message}\n\nPor favor, tente novamente.`);
+                alert(`❌ Erro de ligação!\n\nNão foi possível verificar a disponibilidade. Tente novamente mais tarde.`);
             } finally {
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline';
