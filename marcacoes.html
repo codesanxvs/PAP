@@ -16,7 +16,7 @@
                     <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
                 </a>
             </div>
-            
+
             <div class="menu" id="menu">
                 <a href="index.html">Início</a>
                 <a href="servicos.html">Serviços</a>
@@ -24,7 +24,7 @@
                 <a href="marcacoes.html" class="active">Marcações</a>
                 <a href="index.html#contactos">Contactos</a>
             </div>
-            
+
             <div class="icon">
                 <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
             </div>
@@ -44,7 +44,7 @@
         <div class="center">
             <div class="form-container">
                 <h2 class="section-title">Preencha os Seus Dados</h2>
-                
+
                 <form id="marcacaoForm" class="marcacao-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -68,7 +68,7 @@
                             <label for="servico">Serviço Pretendido *</label>
                             <select id="servico" name="servico" required>
                                 <option value="">Selecione um serviço</option>
-                                
+
                                 <optgroup label="Cabeleireiro">
                                     <option value="Corte">Corte</option>
                                     <option value="Brushing">Brushing</option>
@@ -150,7 +150,7 @@
                     <div class="form-actions">
                         <button type="submit" class="btn-submit" id="submitBtn">
                             <span id="btnText">Enviar Pedido de Marcação</span>
-                            <span id="btnLoader" style="display: none;">⏳ Verificando disponibilidade...</span>
+                            <span id="btnLoader" style="display: none;">⏳ A enviar marcação...</span>
                         </button>
                         <p class="form-note">* Entraremos em contacto para confirmar a sua marcação</p>
                     </div>
@@ -161,58 +161,118 @@
 
     <script src="script.js"></script>
     <script>
-        const API_URL = 'https://meu-servidor-p9g9.onrender.com'; 
+        const API_URL = 'https://meu-servidor-p9g9.onrender.com';
 
-        document.getElementById('marcacaoForm').addEventListener('submit', async function(e) {
+        const form = document.getElementById('marcacaoForm');
+        const dataInput = document.getElementById('data');
+        const horaSelect = document.getElementById('hora');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+
+        function resetHorarios() {
+            Array.from(horaSelect.options).forEach(option => {
+                option.disabled = false;
+                option.textContent = option.value ? option.value : 'Horário';
+            });
+        }
+
+        async function safeJson(response) {
+            const contentType = response.headers.get('content-type') || '';
+            const rawText = await response.text();
+
+            if (!contentType.includes('application/json')) {
+                console.error('Resposta não JSON:', rawText);
+                throw new Error('O servidor devolveu uma resposta inválida. Verifica se a API está online.');
+            }
+
+            try {
+                return JSON.parse(rawText);
+            } catch (error) {
+                console.error('JSON inválido:', rawText);
+                throw new Error('A resposta do servidor não é JSON válido.');
+            }
+        }
+
+        async function atualizarHorariosDisponiveis(dataSelecionada) {
+            resetHorarios();
+
+            if (!dataSelecionada) return;
+
+            try {
+                const cleanUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+
+                const response = await fetch(
+                    `${cleanUrl}/api/marcacoes/horarios-ocupados?data=${encodeURIComponent(dataSelecionada)}`
+                );
+
+                const result = await safeJson(response);
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Erro ao carregar horários');
+                }
+
+                const horasOcupadas = Array.isArray(result.horasOcupadas) ? result.horasOcupadas : [];
+
+                Array.from(horaSelect.options).forEach(option => {
+                    if (option.value && horasOcupadas.includes(option.value)) {
+                        option.disabled = true;
+                        option.textContent = `${option.value} (ocupado)`;
+                    }
+                });
+
+                // Se a hora seleccionada ficou ocupada, limpa a selecção
+                if (horasOcupadas.includes(horaSelect.value)) {
+                    horaSelect.value = '';
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar horários:', error);
+                alert(`❌ ${error.message}`);
+            }
+        }
+
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            const btnLoader = document.getElementById('btnLoader');
-            
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
             submitBtn.disabled = true;
             btnText.style.display = 'none';
             btnLoader.style.display = 'inline';
-            
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
+
             try {
                 const cleanUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
-                
-                // 1. Verificar se o horário já está ocupado
-                const checkResponse = await fetch(`${cleanUrl}/api/marcacoes/verificar?data=${data.data}&hora=${data.hora}`);
-                
-                if (checkResponse.ok) {
-                    const checkResult = await checkResponse.json();
-                    if (checkResult.exists) {
-                        alert(`⚠️ O horário das ${data.hora} no dia ${data.data} já está reservado. Por favor, escolha outra hora.`);
-                        submitBtn.disabled = false;
-                        btnText.style.display = 'inline';
-                        btnLoader.style.display = 'none';
-                        return;
-                    }
-                }
 
-                // 2. Enviar a marcação
+                // CORRIGIDO: removemos a chamada prévia a /verificar que criava
+                // uma race condition. O POST já verifica e rejeita com 409 se
+                // o horário estiver ocupado — essa é a única verificação necessária.
                 const response = await fetch(`${cleanUrl}/api/marcacoes`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
-                const result = await response.json();
+                const result = await safeJson(response);
 
-                if (result.success) {
-                    alert(`✅ Marcação enviada com sucesso!\nObrigado, ${data.nome}.`);
-                    this.reset();
-                } else {
-                    throw new Error(result.message || 'Erro ao processar');
+                if (response.status === 409) {
+                    // Horário foi reservado por outra pessoa entretanto
+                    alert(`⚠️ O horário das ${data.hora} no dia ${data.data} já foi reservado por outro cliente. Por favor, escolha outra hora.`);
+                    // Actualiza a lista de horários para reflectir o estado actual
+                    await atualizarHorariosDisponiveis(data.data);
+                    return;
                 }
 
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Erro ao processar a marcação');
+                }
+
+                alert(`✅ Marcação enviada com sucesso!\nObrigado, ${data.nome}. Entraremos em contacto para confirmar.`);
+                this.reset();
+                resetHorarios();
             } catch (error) {
                 console.error('Erro:', error);
-                alert(`❌ Erro ao processar a marcação. Tente novamente mais tarde.`);
+                alert(`❌ ${error.message}`);
             } finally {
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline';
@@ -221,9 +281,12 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            const dataInput = document.getElementById('data');
             const hoje = new Date().toISOString().split('T')[0];
             dataInput.setAttribute('min', hoje);
+        });
+
+        dataInput.addEventListener('change', async function() {
+            await atualizarHorariosDisponiveis(this.value);
         });
     </script>
 </body>
