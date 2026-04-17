@@ -14,84 +14,20 @@ const notion = new Client({
 
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-function getTitle(page, propertyName) {
-    return page.properties?.[propertyName]?.title?.[0]?.plain_text || '';
+function getPlainTextFromTitle(titleArray) {
+    if (!Array.isArray(titleArray) || titleArray.length === 0) return '';
+    return titleArray.map(item => item.plain_text || '').join('');
 }
 
-function getPhone(page, propertyName) {
-    return page.properties?.[propertyName]?.phone_number || '';
-}
-
-function getEmail(page, propertyName) {
-    return page.properties?.[propertyName]?.email || '';
-}
-
-function getSelect(page, propertyName) {
-    return page.properties?.[propertyName]?.select?.name || '';
-}
-
-function getDate(page, propertyName) {
-    return page.properties?.[propertyName]?.date?.start || '';
-}
-
-function getRichText(page, propertyName) {
-    return page.properties?.[propertyName]?.rich_text?.[0]?.plain_text || '';
-}
-
-function normalizarMarcacao(page) {
-    return {
-        id: page.id,
-        nome: getTitle(page, 'Nome'),
-        telefone: getPhone(page, 'Telefone'),
-        email: getEmail(page, 'Email'),
-        servico: getSelect(page, 'Serviço Pretendido'),
-        data: getDate(page, 'Data Preferida'),
-        hora: getSelect(page, 'Hora Preferida'),
-        status: getSelect(page, 'Status') || '',
-        observacoes: getRichText(page, 'Observações')
-    };
-}
-
-async function getMarcacoesPorData(data) {
-    const response = await notion.databases.query({
-        database_id: DATABASE_ID,
-        filter: {
-            property: 'Data Preferida',
-            date: {
-                equals: data
-            }
-        }
-    });
-
-    return response.results.map(normalizarMarcacao);
-}
-
-async function horarioJaReservado(data, hora) {
-    const marcacoes = await getMarcacoesPorData(data);
-
-    return marcacoes.some(marcacao => {
-        const status = (marcacao.status || '').trim().toLowerCase();
-        const ativo = status === '' || status === 'pendente' || status === 'confirmada';
-        return ativo && marcacao.hora === hora;
-    });
-}
-
-async function getHorasOcupadasParaData(data) {
-    const marcacoes = await getMarcacoesPorData(data);
-
-    return marcacoes
-        .filter(marcacao => {
-            const status = (marcacao.status || '').trim().toLowerCase();
-            return status === '' || status === 'pendente' || status === 'confirmada';
-        })
-        .map(marcacao => marcacao.hora)
-        .filter(Boolean);
+function getPlainTextFromRichText(richTextArray) {
+    if (!Array.isArray(richTextArray) || richTextArray.length === 0) return '';
+    return richTextArray.map(item => item.plain_text || '').join('');
 }
 
 app.get('/', (req, res) => {
-    return res.json({
+    res.json({
         success: true,
-        message: 'API Flash Cabeleireiro online'
+        message: 'API de marcações online'
     });
 });
 
@@ -106,14 +42,32 @@ app.get('/api/marcacoes/verificar', async (req, res) => {
             });
         }
 
-        const exists = await horarioJaReservado(data, hora);
+        const response = await notion.databases.query({
+            database_id: DATABASE_ID,
+            filter: {
+                and: [
+                    {
+                        property: 'Data Preferida',
+                        date: {
+                            equals: data
+                        }
+                    },
+                    {
+                        property: 'Hora Preferida',
+                        select: {
+                            equals: hora
+                        }
+                    }
+                ]
+            }
+        });
 
         return res.json({
             success: true,
-            exists
+            exists: response.results.length > 0
         });
     } catch (error) {
-        console.error('❌ Erro ao verificar horário:', error);
+        console.error('❌ Erro ao verificar disponibilidade:', error);
         return res.status(500).json({
             success: false,
             message: 'Erro ao verificar disponibilidade',
@@ -122,36 +76,9 @@ app.get('/api/marcacoes/verificar', async (req, res) => {
     }
 });
 
-app.get('/api/marcacoes/horarios-ocupados', async (req, res) => {
-    try {
-        const { data } = req.query;
-
-        if (!data) {
-            return res.status(400).json({
-                success: false,
-                message: 'A data é obrigatória'
-            });
-        }
-
-        const horasOcupadas = await getHorasOcupadasParaData(data);
-
-        return res.json({
-            success: true,
-            horasOcupadas
-        });
-    } catch (error) {
-        console.error('❌ Erro ao obter horários ocupados:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Erro ao obter horários ocupados',
-            error: error.message
-        });
-    }
-});
-
 app.post('/api/marcacoes', async (req, res) => {
     try {
-        const { nome, telefone, email, servico, data, hora, observacoes } = req.body || {};
+        const { nome, telefone, email, servico, data, hora, observacoes } = req.body;
 
         if (!nome || !telefone || !servico || !data || !hora) {
             return res.status(400).json({
@@ -160,54 +87,67 @@ app.post('/api/marcacoes', async (req, res) => {
             });
         }
 
-        const reservado = await horarioJaReservado(data, hora);
+        const existingAppointment = await notion.databases.query({
+            database_id: DATABASE_ID,
+            filter: {
+                and: [
+                    {
+                        property: 'Data Preferida',
+                        date: {
+                            equals: data
+                        }
+                    },
+                    {
+                        property: 'Hora Preferida',
+                        select: {
+                            equals: hora
+                        }
+                    }
+                ]
+            }
+        });
 
-        if (reservado) {
+        if (existingAppointment.results.length > 0) {
             return res.status(409).json({
                 success: false,
-                message: 'Este horário já está reservado.'
+                message: `O horário das ${hora} no dia ${data} já está reservado.`
             });
         }
 
         const properties = {
-            Nome: {
-                title: [{ text: { content: String(nome).trim() } }]
+            'Nome': {
+                title: [{ text: { content: nome.trim() } }]
             },
-            Telefone: {
-                phone_number: String(telefone).trim()
-            },
-            Email: {
-                email: email && String(email).includes('@') ? String(email).trim() : null
+            'Telefone': {
+                phone_number: telefone.trim()
             },
             'Serviço Pretendido': {
-                select: { name: String(servico) }
+                select: { name: servico }
             },
             'Data Preferida': {
-                date: { start: String(data) }
+                date: { start: data }
             },
             'Hora Preferida': {
-                select: { name: String(hora) }
+                select: { name: hora }
             },
-            Observações: {
-                rich_text: observacoes
-                    ? [{ text: { content: String(observacoes).trim() } }]
+            'Observações': {
+                rich_text: observacoes && observacoes.trim()
+                    ? [{ text: { content: observacoes.trim() } }]
                     : []
             }
         };
 
-        // Só tenta criar Status se essa opção existir na tua base.
-        // Se não existir, o resto continua a funcionar.
-        try {
-            properties.Status = {
-                select: { name: 'Pendente' }
-            };
-        } catch (_) {}
+        // Só inclui email se for válido — o Notion rejeita null neste campo
+        if (email && email.includes('@')) {
+            properties['Email'] = { email: email.trim() };
+        }
 
         await notion.pages.create({
             parent: { database_id: DATABASE_ID },
             properties
         });
 
+        console.log('✅ Marcação criada no Notion!');
         return res.json({
             success: true,
             message: 'Marcação criada com sucesso!'
@@ -216,7 +156,7 @@ app.post('/api/marcacoes', async (req, res) => {
         console.error('❌ Erro ao criar marcação:', error);
         return res.status(500).json({
             success: false,
-            message: 'Erro interno ao criar marcação',
+            message: 'Erro ao processar a marcação',
             error: error.message
         });
     }
@@ -227,11 +167,20 @@ app.get('/api/marcacoes', async (req, res) => {
         const response = await notion.databases.query({
             database_id: DATABASE_ID,
             sorts: [
-                { property: 'Data Preferida', direction: 'ascending' }
+                { property: 'Data Preferida', direction: 'descending' }
             ]
         });
 
-        const marcacoes = response.results.map(normalizarMarcacao);
+        const marcacoes = response.results.map(page => ({
+            id: page.id,
+            nome: getPlainTextFromTitle(page.properties['Nome']?.title),
+            telefone: page.properties['Telefone']?.phone_number || '',
+            email: page.properties['Email']?.email || '',
+            servico: page.properties['Serviço Pretendido']?.select?.name || '',
+            data: page.properties['Data Preferida']?.date?.start || '',
+            hora: page.properties['Hora Preferida']?.select?.name || '',
+            observacoes: getPlainTextFromRichText(page.properties['Observações']?.rich_text)
+        }));
 
         return res.json({
             success: true,
@@ -245,13 +194,6 @@ app.get('/api/marcacoes', async (req, res) => {
             error: error.message
         });
     }
-});
-
-app.use((req, res) => {
-    return res.status(404).json({
-        success: false,
-        message: 'Rota não encontrada'
-    });
 });
 
 app.listen(PORT, () => {
