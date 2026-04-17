@@ -16,13 +16,13 @@
                     <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
                 </a>
             </div>
-            
+
             <div class="menu" id="menu">
                 <a href="index.html">Início</a>
                 <a href="admin.html" class="active">Admin</a>
             </div>
 
-            <div class="user-avatar-menu" id="userAvatarMenu">
+            <div class="user-avatar-menu" id="userAvatarMenu" style="display: block;">
                 <div class="user-avatar" onclick="toggleUserDropdown()">
                     <span id="userInitials">A</span>
                 </div>
@@ -35,7 +35,7 @@
                     <a href="#" onclick="logout()">🚪 Sair</a>
                 </div>
             </div>
-            
+
             <div class="icon">
                 <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
             </div>
@@ -49,101 +49,32 @@
         </div>
 
         <div class="admin-tabs">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('marcacoes')">📅 Marcações</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('produtos')">🛍️ Produtos</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('clientes')">👥 Clientes</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('estatisticas')">📊 Estatísticas</button>
+            <button class="admin-tab-btn active" onclick="switchAdminTab('marcacoes', this)">📅 Marcações</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('produtos', this)">🛍️ Produtos</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('clientes', this)">👥 Clientes</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('estatisticas', this)">📊 Estatísticas</button>
         </div>
 
-        <!-- Tab Marcações -->
-<div class="admin-tab-content active" id="adminMarcacoesTab">
-    <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
-    <div class="admin-table-container">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Telefone</th>
-                    <th>Serviço</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="marcacoesTableBody">
-                <!-- A tabela será preenchida dinamicamente via JavaScript -->
-            </tbody>
-        </table>
-    </div>
-</div>
+        <div class="admin-tab-content active" id="adminMarcacoesTab">
+            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Telefone</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marcacoesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
 
-<script>
-const API_URL = 'http://localhost:3000/api/marcacoes';
-
-// Função para carregar marcações do backend
-async function carregarMarcacoes() {
-    const tbody = document.getElementById('marcacoesTableBody');
-    tbody.innerHTML = '<tr><td colspan="7">Carregando...</td></tr>';
-
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-
-        if (data.success) {
-            tbody.innerHTML = '';
-            data.marcacoes.forEach(m => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${m.nome}</td>
-                    <td>${m.telefone}</td>
-                    <td>${m.servico}</td>
-                    <td>${m.data}</td>
-                    <td>${m.hora}</td>
-                    <td><span class="status-badge ${m.status.toLowerCase()}">${m.status}</span></td>
-                    <td>
-                        <button class="admin-action-btn btn-confirmar" onclick="atualizarStatus('${m.id}', 'Confirmada', this)">Confirmar</button>
-                        <button class="admin-action-btn btn-cancelar" onclick="atualizarStatus('${m.id}', 'Cancelada', this)">Cancelar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="7">Erro ao carregar marcações</td></tr>';
-        }
-    } catch (err) {
-        console.error(err);
-        tbody.innerHTML = '<tr><td colspan="7">Erro ao conectar ao servidor</td></tr>';
-    }
-}
-
-// Função para atualizar status de uma marcação
-async function atualizarStatus(id, novoStatus, btn) {
-    btn.disabled = true;
-    try {
-        const res = await fetch(`${API_URL}/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: novoStatus })
-        });
-        const data = await res.json();
-        if (data.success) {
-            await carregarMarcacoes(); // Recarrega tabela
-        } else {
-            alert('Erro ao atualizar status: ' + data.message);
-        }
-    } catch (err) {
-        console.error(err);
-        alert('Erro ao conectar com o servidor');
-    } finally {
-        btn.disabled = false;
-    }
-}
-
-// Carregar marcações quando a página abre
-window.addEventListener('DOMContentLoaded', carregarMarcacoes);
-</script>
-        <!-- Tab Produtos -->
         <div class="admin-tab-content" id="adminProdutosTab">
             <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">➕ Adicionar Produto</h2>
             <form class="product-form" onsubmit="adicionarProduto(event)">
@@ -181,25 +112,6 @@ window.addEventListener('DOMContentLoaded', carregarMarcacoes);
                             <td>€19.99</td>
                             <td>Shampoo profissional para todos os tipos de cabelo</td>
                             <td>
-                                <button class="admin-action-btn btn-editar">Editar</button>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Condicionador Hidratante</td>
-                            <td>€24.99</td>
-                            <td>Condicionador com óleo de argan</td>
-                            <td>
-                                <button class="admin-action-btn btn-editar">Editar</button>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Máscara Capilar</td>
-                            <td>€29.99</td>
-                            <td>Tratamento intensivo para cabelos danificados</td>
-                            <td>
-                                <button class="admin-action-btn btn-editar">Editar</button>
                                 <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
                             </td>
                         </tr>
@@ -208,7 +120,6 @@ window.addEventListener('DOMContentLoaded', carregarMarcacoes);
             </div>
         </div>
 
-        <!-- Tab Clientes -->
         <div class="admin-tab-content" id="adminClientesTab">
             <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">👥 Clientes Registados</h2>
             <div class="admin-table-container">
@@ -219,83 +130,35 @@ window.addEventListener('DOMContentLoaded', carregarMarcacoes);
                             <th>Email</th>
                             <th>Telefone</th>
                             <th>Data Registo</th>
-                            <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="clientesTableBody">
-                        <tr>
-                            <td>Maria Silva</td>
-                            <td>maria.silva@email.pt</td>
-                            <td>+351 912 345 678</td>
-                            <td>15/11/2025</td>
-                            <td>
-                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>João Santos</td>
-                            <td>joao.santos@email.pt</td>
-                            <td>+351 918 765 432</td>
-                            <td>10/11/2025</td>
-                            <td>
-                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ana Costa</td>
-                            <td>ana.costa@email.pt</td>
-                            <td>+351 925 678 901</td>
-                            <td>05/11/2025</td>
-                            <td>
-                                <button class="admin-action-btn btn-editar">Ver Detalhes</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="clientesTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Tab Estatísticas -->
         <div class="admin-tab-content" id="adminEstatisticasTab">
             <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📊 Estatísticas do Sistema</h2>
             <div class="stats-grid">
                 <div class="stat-card stat-warning">
                     <div class="stat-icon">⏳</div>
-                    <h3>12</h3>
+                    <h3 id="statPendentes">0</h3>
                     <p>Marcações Pendentes</p>
                 </div>
                 <div class="stat-card stat-success">
                     <div class="stat-icon">✅</div>
-                    <h3>45</h3>
+                    <h3 id="statConfirmadas">0</h3>
                     <p>Marcações Confirmadas</p>
                 </div>
                 <div class="stat-card stat-info">
                     <div class="stat-icon">📦</div>
-                    <h3>8</h3>
+                    <h3 id="statProdutos">1</h3>
                     <p>Produtos Cadastrados</p>
                 </div>
                 <div class="stat-card stat-primary">
                     <div class="stat-icon">👥</div>
-                    <h3>127</h3>
+                    <h3 id="statClientes">0</h3>
                     <p>Clientes Registados</p>
-                </div>
-            </div>
-
-            <div style="margin-top: 40px;">
-                <h3 style="font-family: 'Playfair Display', serif; color: #333; margin-bottom: 20px;">📈 Resumo Mensal</h3>
-                <div class="stats-grid">
-                    <div class="stat-card-simple">
-                        <strong>Receita Total</strong>
-                        <p style="font-size: 1.8rem; color: #28a745; margin-top: 10px;">€3,450</p>
-                    </div>
-                    <div class="stat-card-simple">
-                        <strong>Serviços Realizados</strong>
-                        <p style="font-size: 1.8rem; color: #17a2b8; margin-top: 10px;">78</p>
-                    </div>
-                    <div class="stat-card-simple">
-                        <strong>Novos Clientes</strong>
-                        <p style="font-size: 1.8rem; color: #c89238; margin-top: 10px;">23</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -303,19 +166,170 @@ window.addEventListener('DOMContentLoaded', carregarMarcacoes);
 
     <script src="script.js"></script>
     <script>
-        // Verificar se é admin ao carregar página
-        window.addEventListener('DOMContentLoaded', function() {
-            const user = JSON.parse(localStorage.getItem('flashUser') || 'null');
-            
-            if (!user || user.role !== 'admin') {
-                alert('❌ Acesso negado! Esta área é apenas para administradores.');
-                window.location.href = 'index.html';
-            } else {
-                // Atualizar informações do usuário
-                document.getElementById('userInitials').textContent = user.name.charAt(0).toUpperCase();
-                document.getElementById('userName').textContent = user.name;
-                document.getElementById('userEmail').textContent = user.email;
+        function switchAdminTab(tabName, buttonEl) {
+            document.querySelectorAll('.admin-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const target = document.getElementById(`admin${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`);
+            if (target) target.classList.add('active');
+            if (buttonEl) buttonEl.classList.add('active');
+        }
+
+        function eliminarLinha(button) {
+            if (!confirm('Tem a certeza que quer eliminar esta linha?')) return;
+            button.closest('tr').remove();
+            atualizarEstatisticas();
+        }
+
+        function adicionarProduto(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('produtoNome').value.trim();
+            const preco = document.getElementById('produtoPreco').value.trim();
+            const descricao = document.getElementById('produtoDesc').value.trim();
+
+            const tbody = document.getElementById('produtosTableBody');
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td>${nome}</td>
+                <td>€${Number(preco).toFixed(2)}</td>
+                <td>${descricao}</td>
+                <td>
+                    <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+            event.target.reset();
+            atualizarEstatisticas();
+            alert('Produto adicionado com sucesso.');
+        }
+
+        async function carregarMarcacoes() {
+            const tbody = document.getElementById('marcacoesTableBody');
+            tbody.innerHTML = '<tr><td colspan="7">A carregar...</td></tr>';
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/marcacoes`);
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Erro ao carregar marcações');
+                }
+
+                if (!data.marcacoes.length) {
+                    tbody.innerHTML = '<tr><td colspan="7">Sem marcações registadas.</td></tr>';
+                    atualizarEstatisticas([]);
+                    return;
+                }
+
+                tbody.innerHTML = '';
+
+                data.marcacoes.forEach((m) => {
+                    const status = m.status || 'Pendente';
+                    const statusClass = status.toLowerCase();
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${m.nome}</td>
+                        <td>${m.telefone}</td>
+                        <td>${m.servico}</td>
+                        <td>${m.data}</td>
+                        <td>${m.hora}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        <td>
+                            <button class="admin-action-btn btn-confirmar" onclick="atualizarStatus('${m.id}', 'Confirmada', this)">Confirmar</button>
+                            <button class="admin-action-btn btn-cancelar" onclick="atualizarStatus('${m.id}', 'Cancelada', this)">Cancelar</button>
+                            <button class="admin-action-btn" onclick="atualizarStatus('${m.id}', 'Pendente', this)">Pendente</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                atualizarEstatisticas(data.marcacoes);
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="7">${err.message}</td></tr>`;
             }
+        }
+
+        async function atualizarStatus(id, novoStatus, btn) {
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/marcacoes/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: novoStatus })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Erro ao atualizar status');
+                }
+
+                await carregarMarcacoes();
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Erro ao conectar com o servidor');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function carregarClientes() {
+            const tbody = document.getElementById('clientesTableBody');
+            const users = JSON.parse(localStorage.getItem('flashUsers') || '[]');
+
+            if (!users.length) {
+                tbody.innerHTML = '<tr><td colspan="4">Sem clientes registados.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map((user) => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>-</td>
+                    <td>${new Date(user.createdAt).toLocaleDateString('pt-PT')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function atualizarEstatisticas(marcacoes = null) {
+            const produtos = document.querySelectorAll('#produtosTableBody tr').length;
+            const clientes = JSON.parse(localStorage.getItem('flashUsers') || '[]').length;
+
+            if (marcacoes) {
+                const pendentes = marcacoes.filter(m => (m.status || 'Pendente') === 'Pendente').length;
+                const confirmadas = marcacoes.filter(m => m.status === 'Confirmada').length;
+
+                document.getElementById('statPendentes').textContent = pendentes;
+                document.getElementById('statConfirmadas').textContent = confirmadas;
+            }
+
+            document.getElementById('statProdutos').textContent = produtos;
+            document.getElementById('statClientes').textContent = clientes;
+        }
+
+        window.addEventListener('DOMContentLoaded', async function () {
+            const user = JSON.parse(localStorage.getItem('flashUser') || 'null');
+
+            if (!user || user.role !== 'admin') {
+                alert('Acesso negado. Esta área é apenas para administradores.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('userInitials').textContent = user.name.charAt(0).toUpperCase();
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+
+            carregarClientes();
+            await carregarMarcacoes();
+            atualizarEstatisticas();
         });
     </script>
 </body>

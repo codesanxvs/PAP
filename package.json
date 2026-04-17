@@ -1,16 +1,23 @@
 {
   "name": "flash-cabeleireiro",
   "version": "1.0.0",
-  "description": "",
-  "main": "loja.js",
+  "description": "Website Flash Cabeleireiro com marcações e painel admin",
+  "main": "server_notion_js.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server_notion_js.js",
+    "dev": "node server_notion_js.js",
+    "test": "echo \"Sem testes configurados\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codesanxvs/PAP.git"
   },
-  "keywords": [],
+  "keywords": [
+    "flash",
+    "cabeleireiro",
+    "notion",
+    "express"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

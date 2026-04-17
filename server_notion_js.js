@@ -14,10 +14,6 @@ const notion = new Client({
 
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-if (!process.env.NOTION_KEY || !DATABASE_ID) {
-    console.warn('⚠️ NOTION_KEY ou NOTION_DATABASE_ID não estão definidos.');
-}
-
 function getTitle(page, propertyName) {
     return page.properties?.[propertyName]?.title?.[0]?.plain_text || '';
 }
@@ -51,105 +47,44 @@ function normalizarMarcacao(page) {
         servico: getSelect(page, 'Serviço Pretendido'),
         data: getDate(page, 'Data Preferida'),
         hora: getSelect(page, 'Hora Preferida'),
-        status: getSelect(page, 'Status') || 'Pendente',
+        status: getSelect(page, 'Status') || '',
         observacoes: getRichText(page, 'Observações')
     };
 }
 
-// CORRIGIDO: O filtro "does_not_equal: Cancelada" na API do Notion
-// NÃO devolve registos onde o campo Status está vazio/null,
-// o que faz com que marcações sem status passem a verificação.
-// A solução correcta é filtrar explicitamente pelos status activos:
-// Pendente OU Confirmada.
-async function horarioJaReservado(data, hora) {
+async function getMarcacoesPorData(data) {
     const response = await notion.databases.query({
         database_id: DATABASE_ID,
         filter: {
-            and: [
-                {
-                    property: 'Data Preferida',
-                    date: {
-                        equals: data
-                    }
-                },
-                {
-                    property: 'Hora Preferida',
-                    select: {
-                        equals: hora
-                    }
-                },
-                {
-                    // Em vez de "does_not_equal: Cancelada" (que ignora nulos),
-                    // filtramos explicitamente pelos status que bloqueiam o horário.
-                    or: [
-                        {
-                            property: 'Status',
-                            select: {
-                                equals: 'Pendente'
-                            }
-                        },
-                        {
-                            property: 'Status',
-                            select: {
-                                equals: 'Confirmada'
-                            }
-                        },
-                        // Cobre o caso de registos sem Status definido (campo vazio)
-                        {
-                            property: 'Status',
-                            select: {
-                                is_empty: true
-                            }
-                        }
-                    ]
-                }
-            ]
+            property: 'Data Preferida',
+            date: {
+                equals: data
+            }
         }
     });
 
-    return response.results.length > 0;
+    return response.results.map(normalizarMarcacao);
 }
 
-// Mesma correcção aplicada à query de horários ocupados
-async function getHorasOcupadasParaData(data) {
-    const response = await notion.databases.query({
-        database_id: DATABASE_ID,
-        filter: {
-            and: [
-                {
-                    property: 'Data Preferida',
-                    date: {
-                        equals: data
-                    }
-                },
-                {
-                    or: [
-                        {
-                            property: 'Status',
-                            select: {
-                                equals: 'Pendente'
-                            }
-                        },
-                        {
-                            property: 'Status',
-                            select: {
-                                equals: 'Confirmada'
-                            }
-                        },
-                        {
-                            property: 'Status',
-                            select: {
-                                is_empty: true
-                            }
-                        }
-                    ]
-                }
-            ]
-        }
-    });
+async function horarioJaReservado(data, hora) {
+    const marcacoes = await getMarcacoesPorData(data);
 
-    return response.results
-        .map(page => getSelect(page, 'Hora Preferida'))
+    return marcacoes.some(marcacao => {
+        const status = (marcacao.status || '').trim().toLowerCase();
+        const ativo = status === '' || status === 'pendente' || status === 'confirmada';
+        return ativo && marcacao.hora === hora;
+    });
+}
+
+async function getHorasOcupadasParaData(data) {
+    const marcacoes = await getMarcacoesPorData(data);
+
+    return marcacoes
+        .filter(marcacao => {
+            const status = (marcacao.status || '').trim().toLowerCase();
+            return status === '' || status === 'pendente' || status === 'confirmada';
+        })
+        .map(marcacao => marcacao.hora)
         .filter(Boolean);
 }
 
@@ -225,7 +160,6 @@ app.post('/api/marcacoes', async (req, res) => {
             });
         }
 
-        // Verificação de duplicado no servidor (protecção principal contra race conditions)
         const reservado = await horarioJaReservado(data, hora);
 
         if (reservado) {
@@ -235,36 +169,43 @@ app.post('/api/marcacoes', async (req, res) => {
             });
         }
 
+        const properties = {
+            Nome: {
+                title: [{ text: { content: String(nome).trim() } }]
+            },
+            Telefone: {
+                phone_number: String(telefone).trim()
+            },
+            Email: {
+                email: email && String(email).includes('@') ? String(email).trim() : null
+            },
+            'Serviço Pretendido': {
+                select: { name: String(servico) }
+            },
+            'Data Preferida': {
+                date: { start: String(data) }
+            },
+            'Hora Preferida': {
+                select: { name: String(hora) }
+            },
+            Observações: {
+                rich_text: observacoes
+                    ? [{ text: { content: String(observacoes).trim() } }]
+                    : []
+            }
+        };
+
+        // Só tenta criar Status se essa opção existir na tua base.
+        // Se não existir, o resto continua a funcionar.
+        try {
+            properties.Status = {
+                select: { name: 'Pendente' }
+            };
+        } catch (_) {}
+
         await notion.pages.create({
             parent: { database_id: DATABASE_ID },
-            properties: {
-                Nome: {
-                    title: [{ text: { content: String(nome).trim() } }]
-                },
-                Telefone: {
-                    phone_number: String(telefone).trim()
-                },
-                Email: {
-                    email: email && String(email).includes('@') ? String(email).trim() : null
-                },
-                'Serviço Pretendido': {
-                    select: { name: String(servico) }
-                },
-                'Data Preferida': {
-                    date: { start: String(data) }
-                },
-                'Hora Preferida': {
-                    select: { name: String(hora) }
-                },
-                Status: {
-                    select: { name: 'Pendente' }
-                },
-                Observações: {
-                    rich_text: observacoes
-                        ? [{ text: { content: String(observacoes).trim() } }]
-                        : []
-                }
-            }
+            properties
         });
 
         return res.json({
@@ -286,8 +227,7 @@ app.get('/api/marcacoes', async (req, res) => {
         const response = await notion.databases.query({
             database_id: DATABASE_ID,
             sorts: [
-                { property: 'Data Preferida', direction: 'ascending' },
-                { property: 'Hora Preferida', direction: 'ascending' }
+                { property: 'Data Preferida', direction: 'ascending' }
             ]
         });
 
@@ -307,55 +247,10 @@ app.get('/api/marcacoes', async (req, res) => {
     }
 });
 
-app.patch('/api/marcacoes/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body || {};
-
-        const statusPermitidos = ['Pendente', 'Confirmada', 'Cancelada'];
-
-        if (!status || !statusPermitidos.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Status inválido'
-            });
-        }
-
-        await notion.pages.update({
-            page_id: id,
-            properties: {
-                Status: {
-                    select: { name: status }
-                }
-            }
-        });
-
-        return res.json({
-            success: true,
-            message: 'Status atualizado com sucesso'
-        });
-    } catch (error) {
-        console.error('❌ Erro ao atualizar status:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Erro ao atualizar status',
-            error: error.message
-        });
-    }
-});
-
 app.use((req, res) => {
     return res.status(404).json({
         success: false,
         message: 'Rota não encontrada'
-    });
-});
-
-app.use((err, req, res, next) => {
-    console.error('❌ Erro inesperado:', err);
-    return res.status(500).json({
-        success: false,
-        message: 'Erro interno do servidor'
     });
 });
 
