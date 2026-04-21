@@ -2,8 +2,9 @@
   "name": "flash-cabeleireiro",
   "version": "1.0.0",
   "description": "",
-  "main": "loja.js",
+  "main": "server_notion_js.js",
   "scripts": {
+    "start": "node server_notion_js.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,8 +20,8 @@
   },
   "homepage": "https://github.com/codesanxvs/PAP#readme",
   "dependencies": {
-    "@notionhq/client": "^5.17.0",
+    "@notionhq/client": "^2.2.15",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^4.18.2"
   }
 }
