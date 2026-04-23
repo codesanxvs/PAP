@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/codesanxvs/PAP#readme",
   "dependencies": {
-    "@notionhq/client": "^2.2.15",
+    "@notionhq/client": "^5.17.0",
     "cors": "^2.8.6",
-    "express": "^4.18.2"
+    "express": "^5.2.1"
   }
 }

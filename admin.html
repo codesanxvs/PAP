@@ -45,7 +45,7 @@
     <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
             <h1>⚙️ Painel de Administração</h1>
-            <p>Gerir marcações da base de dados Notion e os produtos da loja.</p>
+            <p>Gerir marcações e produtos diretamente no Notion.</p>
         </div>
 
         <div class="stats-grid" style="margin-bottom: 40px;">
@@ -68,7 +68,7 @@
         </div>
 
         <div class="admin-tab-content active" id="adminMarcacoesTab">
-            <h2 class="admin-section-title" id="marcacaoFormTitle">📋 Lista de Marcações</h2>
+            <h2 class="admin-section-title">📋 Lista de Marcações</h2>
 
             <form class="product-form hidden" id="editarMarcacaoForm" onsubmit="guardarEdicaoMarcacao(event)" style="margin-bottom: 35px;">
                 <input type="hidden" id="editMarcacaoId">
@@ -154,15 +154,9 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label>Imagem do Produto</label>
-                    <input type="file" id="produtoImagem" accept="image/*">
-                    <small class="field-note">Pode carregar uma imagem do computador.</small>
-                </div>
-
-                <div class="form-group full-width">
-                    <div id="imagePreviewContainer" class="image-preview-container hidden">
-                        <img id="imagePreview" alt="Pré-visualização da imagem">
-                    </div>
+                    <label>Imagem (URL)</label>
+                    <input type="url" id="produtoImagemUrl" placeholder="https://...">
+                    <small class="field-note">Para guardar no Notion, usa um link direto da imagem.</small>
                 </div>
 
                 <div class="form-group full-width product-form-actions">
@@ -193,7 +187,6 @@
     <script>
         let marcacoesCache = [];
         let produtosCache = [];
-        let uploadedImageBase64 = '';
 
         async function safeJsonFetch(url, options = {}) {
             const res = await fetch(url, options);
@@ -203,7 +196,7 @@
             try {
                 data = JSON.parse(text);
             } catch {
-                throw new Error(`Resposta inválida do servidor (${res.status}). Verifica se o backend no Render foi atualizado.`);
+                throw new Error(`Resposta inválida do servidor (${res.status}).`);
             }
 
             if (!res.ok || !data.success) {
@@ -222,125 +215,101 @@
             if (buttonEl) buttonEl.classList.add('active');
         }
 
-        function getProdutos() {
-            const stored = localStorage.getItem('flashProducts');
-            if (stored) return JSON.parse(stored);
-            return [];
-        }
-
-        function saveProdutos(produtos) {
-            localStorage.setItem('flashProducts', JSON.stringify(produtos));
-        }
-
-        function renderProdutos() {
-            produtosCache = getProdutos();
-            const tbody = document.getElementById('produtosTableBody');
-
-            if (!produtosCache.length) {
-                tbody.innerHTML = '<tr><td colspan="5">Sem produtos registados.</td></tr>';
-                atualizarEstatisticas();
-                return;
-            }
-
-            tbody.innerHTML = produtosCache.map(produto => `
-                <tr>
-                    <td>
-                        ${produto.imagem
-                            ? `<img src="${produto.imagem}" alt="${produto.nome}" class="admin-product-thumb">`
-                            : '<div class="admin-product-thumb admin-product-thumb-placeholder">Sem imagem</div>'}
-                    </td>
-                    <td>${produto.nome}</td>
-                    <td>€${Number(produto.preco).toFixed(2)}</td>
-                    <td>${produto.descricao}</td>
-                    <td>
-                        <button class="admin-action-btn btn-editar" onclick="editarProduto('${produto.id}')">Editar</button>
-                        <button class="admin-action-btn btn-eliminar" onclick="eliminarProduto('${produto.id}')">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-            atualizarEstatisticas();
-        }
-
         function limparFormularioProduto() {
             document.getElementById('produtoId').value = '';
             document.getElementById('produtoNome').value = '';
             document.getElementById('produtoPreco').value = '';
             document.getElementById('produtoDesc').value = '';
-            document.getElementById('produtoImagem').value = '';
+            document.getElementById('produtoImagemUrl').value = '';
             document.getElementById('produtoFormTitle').textContent = '➕ Adicionar Produto';
             document.getElementById('produtoSubmitBtn').textContent = '➕ Adicionar Produto';
             document.getElementById('cancelEditBtn').classList.add('hidden');
-            uploadedImageBase64 = '';
-            esconderPreviewImagem();
         }
 
-        function mostrarPreviewImagem(src) {
-            document.getElementById('imagePreview').src = src;
-            document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        async function renderProdutos() {
+            const tbody = document.getElementById('produtosTableBody');
+            tbody.innerHTML = '<tr><td colspan="5">A carregar...</td></tr>';
+
+            try {
+                const data = await safeJsonFetch(`${API_BASE_URL}/api/produtos`);
+                produtosCache = data.produtos || [];
+
+                if (!produtosCache.length) {
+                    tbody.innerHTML = '<tr><td colspan="5">Sem produtos registados.</td></tr>';
+                    atualizarEstatisticas();
+                    return;
+                }
+
+                tbody.innerHTML = produtosCache.map(produto => `
+                    <tr>
+                        <td>
+                            ${produto.imagem
+                                ? `<img src="${produto.imagem}" alt="${produto.nome}" class="admin-product-thumb">`
+                                : '<div class="admin-product-thumb admin-product-thumb-placeholder">Sem imagem</div>'}
+                        </td>
+                        <td>${produto.nome}</td>
+                        <td>€${Number(produto.preco).toFixed(2)}</td>
+                        <td>${produto.descricao || '-'}</td>
+                        <td>
+                            <button class="admin-action-btn btn-editar" onclick="editarProduto('${produto.id}')">Editar</button>
+                            <button class="admin-action-btn btn-eliminar" onclick="eliminarProduto('${produto.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                atualizarEstatisticas();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5">${err.message}</td></tr>`;
+            }
         }
 
-        function esconderPreviewImagem() {
-            document.getElementById('imagePreview').src = '';
-            document.getElementById('imagePreviewContainer').classList.add('hidden');
-        }
-
-        document.getElementById('produtoImagem').addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                uploadedImageBase64 = e.target.result;
-                mostrarPreviewImagem(uploadedImageBase64);
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function guardarProduto(event) {
+        async function guardarProduto(event) {
             event.preventDefault();
 
             const id = document.getElementById('produtoId').value;
-            const nome = document.getElementById('produtoNome').value.trim();
-            const preco = Number(document.getElementById('produtoPreco').value);
-            const descricao = document.getElementById('produtoDesc').value.trim();
-
-            const produtos = getProdutos();
-            const existingProduct = produtos.find(p => p.id === id);
-
-            const produto = {
-                id: id || crypto.randomUUID(),
-                nome,
-                preco,
-                descricao,
-                imagem: uploadedImageBase64 || existingProduct?.imagem || ''
+            const payload = {
+                nome: document.getElementById('produtoNome').value.trim(),
+                preco: Number(document.getElementById('produtoPreco').value),
+                descricao: document.getElementById('produtoDesc').value.trim(),
+                imagem: document.getElementById('produtoImagemUrl').value.trim()
             };
 
-            const updated = id
-                ? produtos.map(p => p.id === id ? produto : p)
-                : [...produtos, produto];
+            try {
+                if (id) {
+                    await safeJsonFetch(`${API_BASE_URL}/api/produtos/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    alert('Produto editado com sucesso.');
+                } else {
+                    await safeJsonFetch(`${API_BASE_URL}/api/produtos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    alert('Produto adicionado com sucesso.');
+                }
 
-            saveProdutos(updated);
-            renderProdutos();
-            limparFormularioProduto();
-            alert(id ? 'Produto editado com sucesso.' : 'Produto adicionado com sucesso.');
+                limparFormularioProduto();
+                await renderProdutos();
+            } catch (err) {
+                alert(err.message || 'Erro ao guardar produto');
+            }
         }
 
         function editarProduto(id) {
-            const produto = getProdutos().find(p => p.id === id);
+            const produto = produtosCache.find(p => p.id === id);
             if (!produto) return;
 
             document.getElementById('produtoId').value = produto.id;
             document.getElementById('produtoNome').value = produto.nome;
             document.getElementById('produtoPreco').value = produto.preco;
-            document.getElementById('produtoDesc').value = produto.descricao;
+            document.getElementById('produtoDesc').value = produto.descricao || '';
+            document.getElementById('produtoImagemUrl').value = produto.imagem || '';
             document.getElementById('produtoFormTitle').textContent = '✏️ Editar Produto';
             document.getElementById('produtoSubmitBtn').textContent = '💾 Guardar Alterações';
             document.getElementById('cancelEditBtn').classList.remove('hidden');
-
-            uploadedImageBase64 = produto.imagem || '';
-            if (produto.imagem) mostrarPreviewImagem(produto.imagem);
-            else esconderPreviewImagem();
 
             switchAdminTab('produtos', document.querySelectorAll('.admin-tab-btn')[1]);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -350,12 +319,18 @@
             limparFormularioProduto();
         }
 
-        function eliminarProduto(id) {
+        async function eliminarProduto(id) {
             if (!confirm('Tem a certeza que quer eliminar este produto?')) return;
-            const updated = getProdutos().filter(p => p.id !== id);
-            saveProdutos(updated);
-            renderProdutos();
-            alert('Produto eliminado com sucesso.');
+
+            try {
+                await safeJsonFetch(`${API_BASE_URL}/api/produtos/${id}`, {
+                    method: 'DELETE'
+                });
+                await renderProdutos();
+                alert('Produto eliminado com sucesso.');
+            } catch (err) {
+                alert(err.message || 'Erro ao eliminar produto');
+            }
         }
 
         async function carregarMarcacoes() {
@@ -389,7 +364,6 @@
 
                 atualizarEstatisticas();
             } catch (err) {
-                console.error(err);
                 tbody.innerHTML = `<tr><td colspan="7">${err.message}</td></tr>`;
             }
         }
@@ -449,7 +423,6 @@
                 cancelarEdicaoMarcacao();
                 await carregarMarcacoes();
             } catch (err) {
-                console.error(err);
                 alert(err.message || 'Erro ao editar a marcação');
             }
         }
@@ -466,7 +439,6 @@
 
                 await carregarMarcacoes();
             } catch (err) {
-                console.error(err);
                 alert(err.message || 'Erro ao eliminar a marcação');
             } finally {
                 btn.disabled = false;
@@ -475,7 +447,7 @@
 
         function atualizarEstatisticas() {
             document.getElementById('statTotalMarcacoes').textContent = marcacoesCache.length;
-            document.getElementById('statProdutos').textContent = getProdutos().length;
+            document.getElementById('statProdutos').textContent = produtosCache.length;
         }
 
         window.addEventListener('DOMContentLoaded', async function () {
@@ -493,7 +465,7 @@
             document.getElementById('userName').textContent = user.name || 'Administrador';
             document.getElementById('userEmail').textContent = user.email || 'admin@flash.pt';
 
-            renderProdutos();
+            await renderProdutos();
             await carregarMarcacoes();
         });
     </script>

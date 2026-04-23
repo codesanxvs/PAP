@@ -9,10 +9,12 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 const NOTION_KEY = process.env.NOTION_KEY;
-const DATABASE_ID = process.env.NOTION_DATABASE_ID;
+const MARCACOES_DATABASE_ID = process.env.NOTION_DATABASE_ID;
+const PRODUCTS_DATABASE_ID = process.env.NOTION_PRODUCTS_DATABASE_ID;
 
 if (!NOTION_KEY) console.error('❌ NOTION_KEY não definida!');
-if (!DATABASE_ID) console.error('❌ NOTION_DATABASE_ID não definida!');
+if (!MARCACOES_DATABASE_ID) console.error('❌ NOTION_DATABASE_ID não definida!');
+if (!PRODUCTS_DATABASE_ID) console.error('❌ NOTION_PRODUCTS_DATABASE_ID não definida!');
 
 const notion = new Client({ auth: NOTION_KEY });
 
@@ -30,8 +32,8 @@ function getFirstPropertyName(properties, matcher) {
     return Object.keys(properties).find(name => matcher(name.toLowerCase()));
 }
 
-async function getDatabaseProperties() {
-    const dbInfo = await notion.databases.retrieve({ database_id: DATABASE_ID });
+async function getDatabaseProperties(databaseId) {
+    const dbInfo = await notion.databases.retrieve({ database_id: databaseId });
     return dbInfo.properties || {};
 }
 
@@ -88,16 +90,40 @@ function buildMarcacaoProperties(dbProperties, data) {
     return properties;
 }
 
+function buildProductProperties(data) {
+    return {
+        'Nome': {
+            title: [{ text: { content: String(data.nome || '').trim() } }]
+        },
+        'Preço': {
+            number: Number(data.preco || 0)
+        },
+        'Descrição': {
+            rich_text: String(data.descricao || '').trim()
+                ? [{ text: { content: String(data.descricao).trim() } }]
+                : []
+        },
+        'Imagem': {
+            url: String(data.imagem || '').trim() || null
+        }
+    };
+}
+
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'API de marcações online',
+        message: 'API online',
         env: {
             notion_key: NOTION_KEY ? '✅ definida' : '❌ em falta',
-            database_id: DATABASE_ID ? '✅ definido' : '❌ em falta'
+            marcacoes_database_id: MARCACOES_DATABASE_ID ? '✅ definido' : '❌ em falta',
+            products_database_id: PRODUCTS_DATABASE_ID ? '✅ definido' : '❌ em falta'
         }
     });
 });
+
+/* =========================
+   MARCAÇÕES
+========================= */
 
 app.get('/api/marcacoes/verificar', async (req, res) => {
     try {
@@ -107,12 +133,8 @@ app.get('/api/marcacoes/verificar', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Data e hora sao obrigatorias' });
         }
 
-        if (!DATABASE_ID) {
-            return res.status(500).json({ success: false, message: 'DATABASE_ID não configurado no servidor' });
-        }
-
         const response = await notion.databases.query({
-            database_id: DATABASE_ID,
+            database_id: MARCACOES_DATABASE_ID,
             filter: {
                 and: [
                     { property: 'Data Preferida', date: { equals: data } },
@@ -140,12 +162,8 @@ app.post('/api/marcacoes', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Campos obrigatórios em falta' });
         }
 
-        if (!DATABASE_ID) {
-            return res.status(500).json({ success: false, message: 'DATABASE_ID não configurado no servidor' });
-        }
-
         const existingAppointment = await notion.databases.query({
-            database_id: DATABASE_ID,
+            database_id: MARCACOES_DATABASE_ID,
             filter: {
                 and: [
                     { property: 'Data Preferida', date: { equals: data } },
@@ -161,13 +179,13 @@ app.post('/api/marcacoes', async (req, res) => {
             });
         }
 
-        const dbProperties = await getDatabaseProperties();
+        const dbProperties = await getDatabaseProperties(MARCACOES_DATABASE_ID);
         const properties = buildMarcacaoProperties(dbProperties, {
             nome, telefone, email, servico, data, hora, observacoes
         });
 
         await notion.pages.create({
-            parent: { database_id: DATABASE_ID },
+            parent: { database_id: MARCACOES_DATABASE_ID },
             properties
         });
 
@@ -186,16 +204,12 @@ app.post('/api/marcacoes', async (req, res) => {
 
 app.get('/api/marcacoes', async (req, res) => {
     try {
-        if (!DATABASE_ID) {
-            return res.status(500).json({ success: false, message: 'DATABASE_ID não configurado no servidor' });
-        }
-
-        const dbProperties = await getDatabaseProperties();
+        const dbProperties = await getDatabaseProperties(MARCACOES_DATABASE_ID);
         const servicoProp = getFirstPropertyName(dbProperties, name => name.includes('servi'));
         const obsProp = getFirstPropertyName(dbProperties, name => name.includes('observa'));
 
         const response = await notion.databases.query({
-            database_id: DATABASE_ID,
+            database_id: MARCACOES_DATABASE_ID,
             sorts: [{ property: 'Data Preferida', direction: 'descending' }]
         });
 
@@ -212,7 +226,7 @@ app.get('/api/marcacoes', async (req, res) => {
 
         return res.json({ success: true, marcacoes });
     } catch (error) {
-        console.error('Erro listar:', error.message);
+        console.error('Erro listar marcações:', error.message);
         return res.status(500).json({
             success: false,
             message: 'Erro ao listar marcações',
@@ -230,10 +244,10 @@ app.put('/api/marcacoes/:id', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Campos obrigatórios em falta para editar.' });
         }
 
-        const dbProperties = await getDatabaseProperties();
+        const dbProperties = await getDatabaseProperties(MARCACOES_DATABASE_ID);
 
         const duplicated = await notion.databases.query({
-            database_id: DATABASE_ID,
+            database_id: MARCACOES_DATABASE_ID,
             filter: {
                 and: [
                     { property: 'Data Preferida', date: { equals: data } },
@@ -289,6 +303,110 @@ app.delete('/api/marcacoes/:id', async (req, res) => {
             message: 'Erro ao eliminar a marcação',
             error: error.message,
             detail: error.body || null
+        });
+    }
+});
+
+/* =========================
+   PRODUTOS
+========================= */
+
+app.get('/api/produtos', async (req, res) => {
+    try {
+        const response = await notion.databases.query({
+            database_id: PRODUCTS_DATABASE_ID
+        });
+
+        const produtos = response.results.map(page => ({
+            id: page.id,
+            nome: getPlainTextFromTitle(page.properties['Nome']?.title),
+            preco: page.properties['Preço']?.number || 0,
+            descricao: getPlainTextFromRichText(page.properties['Descrição']?.rich_text),
+            imagem: page.properties['Imagem']?.url || ''
+        }));
+
+        return res.json({ success: true, produtos });
+    } catch (error) {
+        console.error('Erro listar produtos:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro ao listar produtos',
+            error: error.message
+        });
+    }
+});
+
+app.post('/api/produtos', async (req, res) => {
+    try {
+        const { nome, preco, descricao, imagem } = req.body;
+
+        if (!nome || preco === undefined || preco === null) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nome e preço são obrigatórios.'
+            });
+        }
+
+        await notion.pages.create({
+            parent: { database_id: PRODUCTS_DATABASE_ID },
+            properties: buildProductProperties({ nome, preco, descricao, imagem })
+        });
+
+        return res.json({ success: true, message: 'Produto criado com sucesso.' });
+    } catch (error) {
+        console.error('Erro criar produto:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro ao criar produto',
+            error: error.message
+        });
+    }
+});
+
+app.put('/api/produtos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, preco, descricao, imagem } = req.body;
+
+        if (!nome || preco === undefined || preco === null) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nome e preço são obrigatórios.'
+            });
+        }
+
+        await notion.pages.update({
+            page_id: id,
+            properties: buildProductProperties({ nome, preco, descricao, imagem })
+        });
+
+        return res.json({ success: true, message: 'Produto editado com sucesso.' });
+    } catch (error) {
+        console.error('Erro editar produto:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro ao editar produto',
+            error: error.message
+        });
+    }
+});
+
+app.delete('/api/produtos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await notion.pages.update({
+            page_id: id,
+            archived: true
+        });
+
+        return res.json({ success: true, message: 'Produto eliminado com sucesso.' });
+    } catch (error) {
+        console.error('Erro eliminar produto:', error.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro ao eliminar produto',
+            error: error.message
         });
     }
 });
