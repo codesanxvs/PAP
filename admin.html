@@ -45,28 +45,85 @@
     <div class="admin-panel" id="adminPanel">
         <div class="admin-header">
             <h1>⚙️ Painel de Administração</h1>
-            <p>Gerir marcações, produtos e clientes da Flash Cabeleireiro</p>
+            <p>Gerir marcações da base de dados Notion e os produtos da loja.</p>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom: 40px;">
+            <div class="stat-card stat-warning">
+                <div class="stat-icon">📅</div>
+                <h3 id="statTotalMarcacoes">0</h3>
+                <p>Total de Marcações</p>
+            </div>
+
+            <div class="stat-card stat-primary">
+                <div class="stat-icon">📦</div>
+                <h3 id="statProdutos">0</h3>
+                <p>Produtos</p>
+            </div>
         </div>
 
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('marcacoes', this)">📅 Marcações</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('produtos', this)">🛍️ Produtos</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('clientes', this)">👥 Clientes</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('estatisticas', this)">📊 Estatísticas</button>
         </div>
 
         <div class="admin-tab-content active" id="adminMarcacoesTab">
-            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📋 Lista de Marcações</h2>
+            <h2 class="admin-section-title" id="marcacaoFormTitle">📋 Lista de Marcações</h2>
+
+            <form class="product-form hidden" id="editarMarcacaoForm" onsubmit="guardarEdicaoMarcacao(event)" style="margin-bottom: 35px;">
+                <input type="hidden" id="editMarcacaoId">
+
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="editNome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" id="editTelefone" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editEmail">
+                </div>
+
+                <div class="form-group">
+                    <label>Serviço</label>
+                    <input type="text" id="editServico" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="editData" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Hora</label>
+                    <input type="time" id="editHora" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Observações</label>
+                    <textarea id="editObservacoes"></textarea>
+                </div>
+
+                <div class="form-group full-width product-form-actions">
+                    <button type="submit" class="submit-btn" style="width:auto;">💾 Guardar Alterações</button>
+                    <button type="button" class="admin-action-btn btn-secondary" onclick="cancelarEdicaoMarcacao()">Cancelar</button>
+                </div>
+            </form>
+
             <div class="admin-table-container">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>Cliente</th>
                             <th>Telefone</th>
+                            <th>Email</th>
                             <th>Serviço</th>
                             <th>Data</th>
                             <th>Hora</th>
-                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -76,96 +133,86 @@
         </div>
 
         <div class="admin-tab-content" id="adminProdutosTab">
-            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">➕ Adicionar Produto</h2>
-            <form class="product-form" onsubmit="adicionarProduto(event)">
+            <h2 class="admin-section-title" id="produtoFormTitle">➕ Adicionar Produto</h2>
+
+            <form class="product-form" onsubmit="guardarProduto(event)">
+                <input type="hidden" id="produtoId">
+
                 <div class="form-group">
                     <label>Nome do Produto</label>
                     <input type="text" id="produtoNome" required placeholder="Ex: Shampoo Premium">
                 </div>
+
                 <div class="form-group">
                     <label>Preço (€)</label>
-                    <input type="number" id="produtoPreco" step="0.01" required placeholder="19.99">
+                    <input type="number" id="produtoPreco" step="0.01" min="0" required placeholder="19.99">
                 </div>
+
                 <div class="form-group full-width">
                     <label>Descrição</label>
-                    <input type="text" id="produtoDesc" required placeholder="Descrição do produto">
+                    <textarea id="produtoDesc" required placeholder="Descrição do produto"></textarea>
                 </div>
+
                 <div class="form-group full-width">
-                    <button type="submit" class="submit-btn">➕ Adicionar Produto</button>
+                    <label>Imagem do Produto</label>
+                    <input type="file" id="produtoImagem" accept="image/*">
+                    <small class="field-note">Pode carregar uma imagem do computador.</small>
+                </div>
+
+                <div class="form-group full-width">
+                    <div id="imagePreviewContainer" class="image-preview-container hidden">
+                        <img id="imagePreview" alt="Pré-visualização da imagem">
+                    </div>
+                </div>
+
+                <div class="form-group full-width product-form-actions">
+                    <button type="submit" class="submit-btn" id="produtoSubmitBtn">➕ Adicionar Produto</button>
+                    <button type="button" class="admin-action-btn btn-secondary hidden" id="cancelEditBtn" onclick="cancelarEdicaoProduto()">Cancelar edição</button>
                 </div>
             </form>
 
-            <h2 style="margin: 50px 0 25px; font-family: 'Playfair Display', serif; color: #333;">📦 Produtos Cadastrados</h2>
+            <h2 class="admin-section-title" style="margin-top: 50px;">📦 Produtos Cadastrados</h2>
             <div class="admin-table-container">
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Produto</th>
+                            <th>Imagem</th>
+                            <th>Nome</th>
                             <th>Preço</th>
                             <th>Descrição</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="produtosTableBody">
-                        <tr>
-                            <td>Shampoo Premium</td>
-                            <td>€19.99</td>
-                            <td>Shampoo profissional para todos os tipos de cabelo</td>
-                            <td>
-                                <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="produtosTableBody"></tbody>
                 </table>
-            </div>
-        </div>
-
-        <div class="admin-tab-content" id="adminClientesTab">
-            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">👥 Clientes Registados</h2>
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Telefone</th>
-                            <th>Data Registo</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientesTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="admin-tab-content" id="adminEstatisticasTab">
-            <h2 style="margin-bottom: 25px; font-family: 'Playfair Display', serif; color: #333;">📊 Estatísticas do Sistema</h2>
-            <div class="stats-grid">
-                <div class="stat-card stat-warning">
-                    <div class="stat-icon">⏳</div>
-                    <h3 id="statPendentes">0</h3>
-                    <p>Marcações Pendentes</p>
-                </div>
-                <div class="stat-card stat-success">
-                    <div class="stat-icon">✅</div>
-                    <h3 id="statConfirmadas">0</h3>
-                    <p>Marcações Confirmadas</p>
-                </div>
-                <div class="stat-card stat-info">
-                    <div class="stat-icon">📦</div>
-                    <h3 id="statProdutos">1</h3>
-                    <p>Produtos Cadastrados</p>
-                </div>
-                <div class="stat-card stat-primary">
-                    <div class="stat-icon">👥</div>
-                    <h3 id="statClientes">0</h3>
-                    <p>Clientes Registados</p>
-                </div>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
     <script>
+        let marcacoesCache = [];
+        let produtosCache = [];
+        let uploadedImageBase64 = '';
+
+        async function safeJsonFetch(url, options = {}) {
+            const res = await fetch(url, options);
+            const text = await res.text();
+
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch {
+                throw new Error(`Resposta inválida do servidor (${res.status}). Verifica se o backend no Render foi atualizado.`);
+            }
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || 'Erro no pedido');
+            }
+
+            return data;
+        }
+
         function switchAdminTab(tabName, buttonEl) {
             document.querySelectorAll('.admin-tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -175,35 +222,140 @@
             if (buttonEl) buttonEl.classList.add('active');
         }
 
-        function eliminarLinha(button) {
-            if (!confirm('Tem a certeza que quer eliminar esta linha?')) return;
-            button.closest('tr').remove();
+        function getProdutos() {
+            const stored = localStorage.getItem('flashProducts');
+            if (stored) return JSON.parse(stored);
+            return [];
+        }
+
+        function saveProdutos(produtos) {
+            localStorage.setItem('flashProducts', JSON.stringify(produtos));
+        }
+
+        function renderProdutos() {
+            produtosCache = getProdutos();
+            const tbody = document.getElementById('produtosTableBody');
+
+            if (!produtosCache.length) {
+                tbody.innerHTML = '<tr><td colspan="5">Sem produtos registados.</td></tr>';
+                atualizarEstatisticas();
+                return;
+            }
+
+            tbody.innerHTML = produtosCache.map(produto => `
+                <tr>
+                    <td>
+                        ${produto.imagem
+                            ? `<img src="${produto.imagem}" alt="${produto.nome}" class="admin-product-thumb">`
+                            : '<div class="admin-product-thumb admin-product-thumb-placeholder">Sem imagem</div>'}
+                    </td>
+                    <td>${produto.nome}</td>
+                    <td>€${Number(produto.preco).toFixed(2)}</td>
+                    <td>${produto.descricao}</td>
+                    <td>
+                        <button class="admin-action-btn btn-editar" onclick="editarProduto('${produto.id}')">Editar</button>
+                        <button class="admin-action-btn btn-eliminar" onclick="eliminarProduto('${produto.id}')">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+
             atualizarEstatisticas();
         }
 
-        function adicionarProduto(event) {
+        function limparFormularioProduto() {
+            document.getElementById('produtoId').value = '';
+            document.getElementById('produtoNome').value = '';
+            document.getElementById('produtoPreco').value = '';
+            document.getElementById('produtoDesc').value = '';
+            document.getElementById('produtoImagem').value = '';
+            document.getElementById('produtoFormTitle').textContent = '➕ Adicionar Produto';
+            document.getElementById('produtoSubmitBtn').textContent = '➕ Adicionar Produto';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            uploadedImageBase64 = '';
+            esconderPreviewImagem();
+        }
+
+        function mostrarPreviewImagem(src) {
+            document.getElementById('imagePreview').src = src;
+            document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        }
+
+        function esconderPreviewImagem() {
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        document.getElementById('produtoImagem').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                uploadedImageBase64 = e.target.result;
+                mostrarPreviewImagem(uploadedImageBase64);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function guardarProduto(event) {
             event.preventDefault();
 
+            const id = document.getElementById('produtoId').value;
             const nome = document.getElementById('produtoNome').value.trim();
-            const preco = document.getElementById('produtoPreco').value.trim();
+            const preco = Number(document.getElementById('produtoPreco').value);
             const descricao = document.getElementById('produtoDesc').value.trim();
 
-            const tbody = document.getElementById('produtosTableBody');
-            const tr = document.createElement('tr');
+            const produtos = getProdutos();
+            const existingProduct = produtos.find(p => p.id === id);
 
-            tr.innerHTML = `
-                <td>${nome}</td>
-                <td>€${Number(preco).toFixed(2)}</td>
-                <td>${descricao}</td>
-                <td>
-                    <button class="admin-action-btn btn-eliminar" onclick="eliminarLinha(this)">Eliminar</button>
-                </td>
-            `;
+            const produto = {
+                id: id || crypto.randomUUID(),
+                nome,
+                preco,
+                descricao,
+                imagem: uploadedImageBase64 || existingProduct?.imagem || ''
+            };
 
-            tbody.appendChild(tr);
-            event.target.reset();
-            atualizarEstatisticas();
-            alert('Produto adicionado com sucesso.');
+            const updated = id
+                ? produtos.map(p => p.id === id ? produto : p)
+                : [...produtos, produto];
+
+            saveProdutos(updated);
+            renderProdutos();
+            limparFormularioProduto();
+            alert(id ? 'Produto editado com sucesso.' : 'Produto adicionado com sucesso.');
+        }
+
+        function editarProduto(id) {
+            const produto = getProdutos().find(p => p.id === id);
+            if (!produto) return;
+
+            document.getElementById('produtoId').value = produto.id;
+            document.getElementById('produtoNome').value = produto.nome;
+            document.getElementById('produtoPreco').value = produto.preco;
+            document.getElementById('produtoDesc').value = produto.descricao;
+            document.getElementById('produtoFormTitle').textContent = '✏️ Editar Produto';
+            document.getElementById('produtoSubmitBtn').textContent = '💾 Guardar Alterações';
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+            uploadedImageBase64 = produto.imagem || '';
+            if (produto.imagem) mostrarPreviewImagem(produto.imagem);
+            else esconderPreviewImagem();
+
+            switchAdminTab('produtos', document.querySelectorAll('.admin-tab-btn')[1]);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelarEdicaoProduto() {
+            limparFormularioProduto();
+        }
+
+        function eliminarProduto(id) {
+            if (!confirm('Tem a certeza que quer eliminar este produto?')) return;
+            const updated = getProdutos().filter(p => p.id !== id);
+            saveProdutos(updated);
+            renderProdutos();
+            alert('Produto eliminado com sucesso.');
         }
 
         async function carregarMarcacoes() {
@@ -211,125 +363,138 @@
             tbody.innerHTML = '<tr><td colspan="7">A carregar...</td></tr>';
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/marcacoes`);
-                const data = await res.json();
+                const data = await safeJsonFetch(`${API_BASE_URL}/api/marcacoes`);
+                marcacoesCache = data.marcacoes || [];
 
-                if (!res.ok || !data.success) {
-                    throw new Error(data.message || 'Erro ao carregar marcações');
-                }
-
-                if (!data.marcacoes.length) {
+                if (!marcacoesCache.length) {
                     tbody.innerHTML = '<tr><td colspan="7">Sem marcações registadas.</td></tr>';
-                    atualizarEstatisticas([]);
+                    atualizarEstatisticas();
                     return;
                 }
 
-                tbody.innerHTML = '';
-
-                data.marcacoes.forEach((m) => {
-                    const status = m.status || 'Pendente';
-                    const statusClass = status.toLowerCase();
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${m.nome}</td>
-                        <td>${m.telefone}</td>
-                        <td>${m.servico}</td>
-                        <td>${m.data}</td>
-                        <td>${m.hora}</td>
-                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                tbody.innerHTML = marcacoesCache.map((m) => `
+                    <tr>
+                        <td>${m.nome || '-'}</td>
+                        <td>${m.telefone || '-'}</td>
+                        <td>${m.email || '-'}</td>
+                        <td>${m.servico || '-'}</td>
+                        <td>${m.data || '-'}</td>
+                        <td>${m.hora || '-'}</td>
                         <td>
-                            <button class="admin-action-btn btn-confirmar" onclick="atualizarStatus('${m.id}', 'Confirmada', this)">Confirmar</button>
-                            <button class="admin-action-btn btn-cancelar" onclick="atualizarStatus('${m.id}', 'Cancelada', this)">Cancelar</button>
-                            <button class="admin-action-btn" onclick="atualizarStatus('${m.id}', 'Pendente', this)">Pendente</button>
+                            <button class="admin-action-btn btn-editar" onclick="abrirEdicaoMarcacao('${m.id}')">Editar</button>
+                            <button class="admin-action-btn btn-eliminar" onclick="eliminarMarcacao('${m.id}', this)">Eliminar</button>
                         </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                    </tr>
+                `).join('');
 
-                atualizarEstatisticas(data.marcacoes);
+                atualizarEstatisticas();
             } catch (err) {
                 console.error(err);
                 tbody.innerHTML = `<tr><td colspan="7">${err.message}</td></tr>`;
             }
         }
 
-        async function atualizarStatus(id, novoStatus, btn) {
+        function abrirEdicaoMarcacao(id) {
+            const marcacao = marcacoesCache.find(m => m.id === id);
+            if (!marcacao) return;
+
+            document.getElementById('editarMarcacaoForm').classList.remove('hidden');
+            document.getElementById('editMarcacaoId').value = marcacao.id;
+            document.getElementById('editNome').value = marcacao.nome || '';
+            document.getElementById('editTelefone').value = marcacao.telefone || '';
+            document.getElementById('editEmail').value = marcacao.email || '';
+            document.getElementById('editServico').value = marcacao.servico || '';
+            document.getElementById('editData').value = marcacao.data || '';
+            document.getElementById('editHora').value = marcacao.hora || '';
+            document.getElementById('editObservacoes').value = marcacao.observacoes || '';
+
+            window.scrollTo({ top: 220, behavior: 'smooth' });
+        }
+
+        function cancelarEdicaoMarcacao() {
+            document.getElementById('editarMarcacaoForm').classList.add('hidden');
+            document.getElementById('editMarcacaoId').value = '';
+            document.getElementById('editNome').value = '';
+            document.getElementById('editTelefone').value = '';
+            document.getElementById('editEmail').value = '';
+            document.getElementById('editServico').value = '';
+            document.getElementById('editData').value = '';
+            document.getElementById('editHora').value = '';
+            document.getElementById('editObservacoes').value = '';
+        }
+
+        async function guardarEdicaoMarcacao(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('editMarcacaoId').value;
+
+            const payload = {
+                nome: document.getElementById('editNome').value.trim(),
+                telefone: document.getElementById('editTelefone').value.trim(),
+                email: document.getElementById('editEmail').value.trim(),
+                servico: document.getElementById('editServico').value.trim(),
+                data: document.getElementById('editData').value,
+                hora: document.getElementById('editHora').value,
+                observacoes: document.getElementById('editObservacoes').value.trim()
+            };
+
+            try {
+                await safeJsonFetch(`${API_BASE_URL}/api/marcacoes/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                alert('Marcação editada com sucesso.');
+                cancelarEdicaoMarcacao();
+                await carregarMarcacoes();
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Erro ao editar a marcação');
+            }
+        }
+
+        async function eliminarMarcacao(id, btn) {
+            if (!confirm('Tem a certeza que quer eliminar esta marcação da base de dados?')) return;
+
             btn.disabled = true;
 
             try {
-                const res = await fetch(`${API_BASE_URL}/api/marcacoes/${id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: novoStatus })
+                await safeJsonFetch(`${API_BASE_URL}/api/marcacoes/${id}`, {
+                    method: 'DELETE'
                 });
-
-                const data = await res.json();
-
-                if (!res.ok || !data.success) {
-                    throw new Error(data.message || 'Erro ao atualizar status');
-                }
 
                 await carregarMarcacoes();
             } catch (err) {
                 console.error(err);
-                alert(err.message || 'Erro ao conectar com o servidor');
+                alert(err.message || 'Erro ao eliminar a marcação');
             } finally {
                 btn.disabled = false;
             }
         }
 
-        function carregarClientes() {
-            const tbody = document.getElementById('clientesTableBody');
-            const users = JSON.parse(localStorage.getItem('flashUsers') || '[]');
-
-            if (!users.length) {
-                tbody.innerHTML = '<tr><td colspan="4">Sem clientes registados.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = users.map((user) => `
-                <tr>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>-</td>
-                    <td>${new Date(user.createdAt).toLocaleDateString('pt-PT')}</td>
-                </tr>
-            `).join('');
-        }
-
-        function atualizarEstatisticas(marcacoes = null) {
-            const produtos = document.querySelectorAll('#produtosTableBody tr').length;
-            const clientes = JSON.parse(localStorage.getItem('flashUsers') || '[]').length;
-
-            if (marcacoes) {
-                const pendentes = marcacoes.filter(m => (m.status || 'Pendente') === 'Pendente').length;
-                const confirmadas = marcacoes.filter(m => m.status === 'Confirmada').length;
-
-                document.getElementById('statPendentes').textContent = pendentes;
-                document.getElementById('statConfirmadas').textContent = confirmadas;
-            }
-
-            document.getElementById('statProdutos').textContent = produtos;
-            document.getElementById('statClientes').textContent = clientes;
+        function atualizarEstatisticas() {
+            document.getElementById('statTotalMarcacoes').textContent = marcacoesCache.length;
+            document.getElementById('statProdutos').textContent = getProdutos().length;
         }
 
         window.addEventListener('DOMContentLoaded', async function () {
+            ensureAdminUser();
+
             const user = JSON.parse(localStorage.getItem('flashUser') || 'null');
 
-            if (!user || user.role !== 'admin') {
+            if (!user || user.role !== 'admin' || user.email !== 'admin@flash.pt') {
                 alert('Acesso negado. Esta área é apenas para administradores.');
-                window.location.href = 'index.html';
+                window.location.href = 'login.html';
                 return;
             }
 
-            document.getElementById('userInitials').textContent = user.name.charAt(0).toUpperCase();
-            document.getElementById('userName').textContent = user.name;
-            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userInitials').textContent = (user.name || 'A').charAt(0).toUpperCase();
+            document.getElementById('userName').textContent = user.name || 'Administrador';
+            document.getElementById('userEmail').textContent = user.email || 'admin@flash.pt';
 
-            carregarClientes();
+            renderProdutos();
             await carregarMarcacoes();
-            atualizarEstatisticas();
         });
     </script>
 </body>

@@ -757,14 +757,19 @@ section.sobre {
     font-weight: 500;
 }
 
-.status-pendente {
+.status-badge.pendente {
     background: #fff3cd;
     color: #856404;
 }
 
-.status-confirmada {
+.status-badge.confirmada {
     background: #d4edda;
     color: #155724;
+}
+
+.status-badge.cancelada {
+    background: #f8d7da;
+    color: #842029;
 }
 
 .admin-action-btn {
@@ -790,6 +795,16 @@ section.sobre {
 
 .btn-eliminar {
     background: #dc3545;
+    color: white;
+}
+
+.btn-cancelar {
+    background: #fd7e14;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
     color: white;
 }
 
@@ -828,7 +843,7 @@ section.sobre {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.stat-card-warning {
+.stat-card.stat-warning {
     background: linear-gradient(135deg, #ffc107, #ff9800);
 }
 
@@ -857,14 +872,6 @@ section.sobre {
 .stat-card p {
     opacity: 0.9;
     font-size: 1rem;
-}
-
-.stat-card-simple {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 /* ========== MARCAÇÕES E LOJA ========== */
@@ -983,6 +990,356 @@ section.sobre {
     font-size: 0.9rem;
     font-style: italic;
     font-family: 'Poppins', sans-serif;
+}
+
+/* ===== ESTILIZAÇÃO DA SECÇÃO DE PRODUTOS ===== */
+
+.sugestoes-section {
+    padding: 60px 0 80px;
+    background: #fff;
+}
+
+.sugestoes-section .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    color: #333;
+    text-align: left;
+    margin-bottom: 45px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sugestoes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    width: 100%;
+}
+
+.produto-card-novo {
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.produto-card-novo:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.produto-img-wrap {
+    position: relative;
+    background: #fdfdfd;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.produto-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 20px;
+}
+
+.badge-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    z-index: 2;
+}
+
+.badge-novidade {
+    background-color: #c89238;
+}
+
+.badge-vendido {
+    background-color: #28a745;
+}
+
+.produto-info-novo {
+    padding: 20px 15px;
+    text-align: left;
+}
+
+.produto-nome {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    color: #222;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.produto-descricao-loja {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.preco-final {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.loja-empty-state {
+    width: 100%;
+    background: #fafafa;
+    border: 1px dashed #ddd;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ========== PÁGINA SERVIÇOS  ========== */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+.main-services {
+    margin-top: 220px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.services-hero {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.services-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #1a1a1a;
+}
+
+.services-hero p {
+    font-weight: 300;
+    color: #777;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.main-services .category-header {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #c89238;
+    margin: 60px 0 20px;
+    border-bottom: 2px solid #c89238;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.sanjam-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 50px;
+    table-layout: fixed;
+}
+
+.sanjam-table th,
+.sanjam-table td {
+    padding: 15px;
+    text-align: center;
+    width: 25%;
+}
+
+.sanjam-table th {
+    background: #f9f9f9;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.sanjam-table td {
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+
+.sanjam-table td:first-child,
+.sanjam-table th:first-child {
+    text-align: left;
+}
+
+.price-tag {
+    font-weight: 700;
+    color: #c89238;
+    font-variant-numeric: tabular-nums;
+}
+
+.grid-estetica {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.col-estetica {
+    background: #fff;
+}
+
+.col-estetica h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.item-estetica {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.9rem;
+}
+
+.item-estetica span:last-child {
+    color: #c89238;
+    font-weight: 700;
+}
+
+.booking-section {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.btn-sanjam-style {
+    display: inline-block;
+    padding: 15px 40px;
+    border: 2px solid #c89238;
+    color: #c89238;
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.btn-sanjam-style:hover {
+    background: #c89238;
+    color: white;
+}
+
+.services-footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 40px 0;
+    color: #999;
+    font-size: 0.8rem;
+}
+
+.admin-section-title {
+    margin-bottom: 25px;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+}
+
+.field-note {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.product-form textarea {
+    min-height: 110px;
+}
+
+.product-form-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.product-form-actions .submit-btn {
+    width: auto;
+    min-width: 240px;
+}
+
+.image-preview-container {
+    width: 180px;
+    height: 180px;
+    border: 2px dashed #d9d9d9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-product-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.admin-product-thumb-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+    color: #777;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 8px;
+}
+
+.scroll-top-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: #c89238;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+.scroll-top-btn:hover {
+    background: #bd8a30;
 }
 
 /* ========== RESPONSIVE ========== */
@@ -1124,6 +1481,25 @@ section.sobre {
     .stats-grid {
         grid-template-columns: 1fr;
     }
+
+    .product-form-actions .submit-btn {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .product-form-actions .admin-action-btn {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .sugestoes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .sugestoes-section .section-title {
+        font-size: 2.2rem;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -1155,266 +1531,12 @@ section.sobre {
         height: 40px;
         font-size: 1.5rem;
     }
+
+    .sugestoes-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* ===== ESTILIZAÇÃO DA SECÇÃO DE PRODUTOS (IGUAL À IMAGEM) ===== */
-
-.sugestoes-section {
-    padding: 60px 0 80px;
-    background: #fff;
-}
-
-/* Título alinhado à esquerda com emoji */
-.sugestoes-section .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    font-weight: 400;
-    color: #333;
-    text-align: left; /* Alinhamento à esquerda conforme imagem */
-    margin-bottom: 45px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.sugestoes-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-}
-
-/* Card do Produto mais moderno */
-.produto-card-novo {
-    background: #fff;
-    border: none;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.produto-card-novo:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-.produto-img-wrap {
-    position: relative;
-    background: #fdfdfd;
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.produto-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 20px;
-}
-
-/* BADGES ESTILO PÍLULA (ARREDONDADAS) */
-.badge-status {
-    position: absolute;
-    top: 15px;
-    right: 15px; /* Alinhadas à direita */
-    padding: 6px 18px;
-    border-radius: 50px; /* Formato pílula */
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: 'Poppins', sans-serif;
-    color: #fff;
-    z-index: 2;
-}
-
-.badge-novidade {
-    background-color: #c89238; /* Castanho/Dourado da imagem */
-}
-
-.badge-vendido {
-    background-color: #28a745; /* Verde da imagem */
-}
-
-.produto-info-novo {
-    padding: 20px 15px;
-    text-align: left;
-}
-
-.produto-nome {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
-    color: #222;
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.preco-final {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #222;
-}
-
-/* Responsividade */
-@media (max-width: 1024px) { .sugestoes-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 768px) { 
-    .sugestoes-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .sugestoes-section .section-title { font-size: 2.2rem; }
-}
-@media (max-width: 480px) { .sugestoes-grid { grid-template-columns: 1fr; } }
-
-/* ========== PÁGINA SERVIÇOS  ========== */
-
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
-
-.main-services {
-    margin-top: 220px;
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* HERO */
-.services-hero {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-.services-hero h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: #1a1a1a;
-}
-
-.services-hero p {
-    font-weight: 300;
-    color: #777;
-    margin-top: 10px;
-    font-size: 1rem;
-}
-
-/* TÍTULOS DAS SECÇÕES */
-.main-services .category-header {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #c89238;
-    margin: 60px 0 20px;
-    border-bottom: 2px solid #c89238;
-    padding-bottom: 8px;
-    text-transform: uppercase;
-}
-
-/* TABELA */
-.sanjam-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 50px;
-    table-layout: fixed; /* resolve desalinhamento */
-}
-
-.sanjam-table th,
-.sanjam-table td {
-    padding: 15px;
-    text-align: center;
-    width: 25%;
-}
-
-.sanjam-table th {
-    background: #f9f9f9;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.sanjam-table td {
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
-}
-
-.sanjam-table td:first-child,
-.sanjam-table th:first-child {
-    text-align: left;
-}
-
-/* PREÇOS */
-.price-tag {
-    font-weight: 700;
-    color: #c89238;
-    font-variant-numeric: tabular-nums; /* alinha números */
-}
-
-/* GRID ESTÉTICA */
-.grid-estetica {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.col-estetica {
-    background: #fff;
-}
-
-.col-estetica h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: #1a1a1a;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-    text-transform: uppercase;
-}
-
-.item-estetica {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #f5f5f5;
-    font-size: 0.9rem;
-}
-
-.item-estetica span:last-child {
-    color: #c89238;
-    font-weight: 700;
-}
-
-/* BOTÃO */
-.booking-section {
-    text-align: center;
-    margin-top: 60px;
-}
-
-.btn-sanjam-style {
-    display: inline-block;
-    padding: 15px 40px;
-    border: 2px solid #c89238;
-    color: #c89238;
-    text-decoration: none;
-    font-weight: 700;
-    letter-spacing: 1px;
-    transition: 0.3s;
-}
-
-.btn-sanjam-style:hover {
-    background: #c89238;
-    color: white;
-}
-
-/* FOOTER */
-.services-footer {
-    text-align: center;
-    margin-top: 60px;
-    padding: 40px 0;
-    color: #999;
-    font-size: 0.8rem;
-}
-
-/* RESPONSIVO */
 @media (max-width: 900px) {
     .grid-estetica {
         grid-template-columns: repeat(2, 1fr);

@@ -40,7 +40,7 @@
         </div>
     </section>
 
-    <section class="section marcacoes-form-section">
+    <section class="section visible marcacoes-form-section">
         <div class="center">
             <div class="form-container">
                 <h2 class="section-title">Preencha os Seus Dados</h2>
@@ -68,7 +68,7 @@
                             <label for="servico">Serviço Pretendido *</label>
                             <select id="servico" name="servico" required>
                                 <option value="">Selecione um serviço</option>
-                                
+
                                 <optgroup label="Cabeleireiro">
                                     <option value="Corte">Corte</option>
                                     <option value="Brushing">Brushing</option>
@@ -161,8 +161,6 @@
 
     <script src="script.js"></script>
     <script>
-        const API_URL = 'https://meu-servidor-p9g9.onrender.com';
-
         document.getElementById('marcacaoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -178,7 +176,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const cleanUrl = API_URL.endsWith('/') ? API_URL.slice(0, -1) : API_URL;
+                const cleanUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
 
                 const checkResponse = await fetch(
                     `${cleanUrl}/api/marcacoes/verificar?data=${encodeURIComponent(data.data)}&hora=${encodeURIComponent(data.hora)}`

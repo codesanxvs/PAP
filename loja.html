@@ -20,11 +20,30 @@
 
             <nav class="menu" id="menu">
                 <a href="index.html">Início</a>
-                <a href="index.html#servicos">Serviços</a>
+                <a href="servicos.html">Serviços</a>
                 <a href="loja.html" class="active">Produtos</a>
                 <a href="marcacoes.html">Marcações</a>
                 <a href="index.html#contactos">Contactos</a>
+                <a href="login.html">Login</a>
             </nav>
+
+            <div class="user-avatar-menu" id="userAvatarMenu" style="display: none;">
+                <div class="user-avatar" onclick="toggleUserDropdown()">
+                    <span id="userInitials">U</span>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <strong id="userName">Utilizador</strong>
+                        <span id="userEmail">user@email.pt</span>
+                    </div>
+                    <a href="admin.html" id="adminLink" style="display: none;">⚙️ Painel Admin</a>
+                    <a href="#" onclick="logout()">🚪 Sair</a>
+                </div>
+            </div>
+
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
         </div>
     </header>
 
@@ -39,62 +58,8 @@
 
     <section class="sugestoes-section section">
         <div class="center" style="flex-direction: column;">
-            
             <h2 class="section-title">✨ Nossos Produtos</h2>
-
-            <div class="sugestoes-grid" id="sugestoesGrid">
-
-                <div class="produto-card-novo">
-                    <div class="produto-img-wrap">
-                        <span class="badge-status badge-novidade">Novidade</span>
-                        <img src="assets/olaplex4.jpg" alt="Olaplex N.4" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Olaplex+N.4'">
-                    </div>
-                    <div class="produto-info-novo">
-                        <p class="produto-nome">Olaplex N.4 Shampoo (250ml)</p>
-                        <div class="produto-preco-wrap">
-                            <span class="preco-final">22.50 €</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="produto-card-novo">
-                    <div class="produto-img-wrap">
-                        <span class="badge-status badge-vendido">Mais Vendido</span>
-                        <img src="assets/olaplex7.jpg" alt="Olaplex N.7" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Olaplex+N.7'">
-                    </div>
-                    <div class="produto-info-novo">
-                        <p class="produto-nome">Olaplex N.7 Bonding Oil (30ml)</p>
-                        <div class="produto-preco-wrap">
-                            <span class="preco-final">23.90 €</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="produto-card-novo">
-                    <div class="produto-img-wrap">
-                        <img src="assets/tigi-serial-blonde.jpg" alt="TIGI" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=TIGI'">
-                    </div>
-                    <div class="produto-info-novo">
-                        <p class="produto-nome">TIGI Bed Head Serial Blonde (400ml)</p>
-                        <div class="produto-preco-wrap">
-                            <span class="preco-final">9.00 €</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="produto-card-novo">
-                    <div class="produto-img-wrap">
-                        <img src="assets/loreal-curl.jpg" alt="L'Oréal" onerror="this.src='https://via.placeholder.com/400x400/f0f0f0/999?text=Loreal'">
-                    </div>
-                    <div class="produto-info-novo">
-                        <p class="produto-nome">L'Oréal Curl Expression Spray (190ml)</p>
-                        <div class="produto-preco-wrap">
-                            <span class="preco-final">19.50 €</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <div class="sugestoes-grid" id="sugestoesGrid"></div>
         </div>
     </section>
 
@@ -112,20 +77,7 @@
 
     <button class="scroll-top-btn" id="scrollTopBtn" title="Voltar ao topo">↑</button>
 
-    <script>
-        // Reveal animation
-        const sections = document.querySelectorAll('.section');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
-        sections.forEach(s => observer.observe(s));
-
-        // Scroll to top button
-        const scrollBtn = document.getElementById('scrollTopBtn');
-        window.addEventListener('scroll', () => {
-            scrollBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
-        });
-        scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    </script>
+    <script src="script.js"></script>
+    <script src="loja.js"></script>
 </body>
 </html>
