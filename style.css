@@ -6,17 +6,23 @@
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    background: #f8f8f8;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
 .center {
     display: flex;
     flex-wrap: wrap;
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 2%;
-}
-
-html, body {
-    height: 100%;
-    overflow-x: hidden;
 }
 
 /* ========== HEADER ========== */
@@ -233,7 +239,7 @@ header {
     color: #c89238;
 }
 
-/* ========== MAIN SECTIONS ========== */
+/* ========== LANDING ========== */
 section.sobre {
     height: 100vh;
     position: relative;
@@ -288,23 +294,6 @@ section.sobre {
     position: relative;
 }
 
-.texto-sobre h1 .highlight::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(135deg, #d4af37, #c89238);
-    border-radius: 2px;
-    animation: underlineSlide 1.5s ease-out 1s both;
-}
-
-@keyframes underlineSlide {
-    from { width: 0; }
-    to { width: 100%; }
-}
-
 .texto-sobre p {
     font-size: 1.3rem;
     color: #666;
@@ -346,6 +335,7 @@ section.sobre {
     50% { transform: translateY(-30px) rotate(15deg); }
 }
 
+/* ========== SECTIONS ========== */
 .section {
     padding: 80px 0;
     opacity: 0;
@@ -367,7 +357,7 @@ section.sobre {
     font-family: 'Playfair Display', serif;
 }
 
-/* ========== CONTACT SECTION ========== */
+/* ========== CONTACT ========== */
 .contact {
     background: #333;
     color: #fff;
@@ -422,7 +412,7 @@ section.sobre {
     object-fit: cover;
 }
 
-/* ========== PÁGINA DE LOGIN ========== */
+/* ========== LOGIN ========== */
 .login-page {
     background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
     min-height: 100vh;
@@ -491,91 +481,6 @@ section.sobre {
 .auth-subtitle .link-destaque:hover {
     text-decoration: underline;
 }
-
-.social-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.social-btn {
-    padding: 14px 20px;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-}
-
-.google-btn {
-    background: #fff;
-    border: 2px solid #ddd;
-    color: #333;
-}
-
-.google-btn:hover {
-    background: #f8f8f8;
-    border-color: #c89238;
-    transform: translateY(-2px);
-}
-
-.facebook-btn {
-    background: #1877f2;
-    color: white;
-}
-
-.facebook-btn:hover {
-    background: #166fe5;
-    transform: translateY(-2px);
-}
-
-.email-register-btn {
-    width: 100%;
-    padding: 14px;
-    background: white;
-    border: 2px solid #ddd;
-    border-radius: 12px;
-    color: #333;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
-
-.email-register-btn:hover {
-    background: #f8f8f8;
-    border-color: #c89238;
-    transform: translateY(-2px);
-}
-
-.divider {
-    text-align: center;
-    margin: 30px 0;
-    color: #999;
-    position: relative;
-    font-family: 'Poppins', sans-serif;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 42%;
-    height: 1px;
-    background: #ddd;
-}
-
-.divider::before { left: 0; }
-.divider::after { right: 0; }
 
 .form-group {
     margin-bottom: 20px;
@@ -658,7 +563,7 @@ section.sobre {
     display: none !important;
 }
 
-/* ========== PAINEL ADMINISTRATIVO ========== */
+/* ========== ADMIN ========== */
 .admin-panel {
     max-width: 1400px;
     margin: 0 auto;
@@ -742,34 +647,13 @@ section.sobre {
     text-align: left;
     border-bottom: 1px solid #ddd;
     font-family: 'Poppins', sans-serif;
+    vertical-align: middle;
 }
 
 .admin-table th {
     background: #f8f8f8;
     font-weight: 600;
     color: #333;
-}
-
-.status-badge {
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.status-badge.pendente {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-badge.confirmada {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-badge.cancelada {
-    background: #f8d7da;
-    color: #842029;
 }
 
 .admin-action-btn {
@@ -783,11 +667,6 @@ section.sobre {
     font-family: 'Poppins', sans-serif;
 }
 
-.btn-confirmar {
-    background: #28a745;
-    color: white;
-}
-
 .btn-editar {
     background: #c89238;
     color: white;
@@ -795,11 +674,6 @@ section.sobre {
 
 .btn-eliminar {
     background: #dc3545;
-    color: white;
-}
-
-.btn-cancelar {
-    background: #fd7e14;
     color: white;
 }
 
@@ -847,14 +721,6 @@ section.sobre {
     background: linear-gradient(135deg, #ffc107, #ff9800);
 }
 
-.stat-card.stat-success {
-    background: linear-gradient(135deg, #28a745, #20873a);
-}
-
-.stat-card.stat-info {
-    background: linear-gradient(135deg, #17a2b8, #138496);
-}
-
 .stat-card.stat-primary {
     background: linear-gradient(135deg, #c89238, #bd8a30);
 }
@@ -874,7 +740,74 @@ section.sobre {
     font-size: 1rem;
 }
 
-/* ========== MARCAÇÕES E LOJA ========== */
+.admin-section-title {
+    margin-bottom: 25px;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+}
+
+.field-note {
+    display: block;
+    margin-top: 8px;
+    color: #666;
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.product-form textarea {
+    min-height: 110px;
+}
+
+.product-form-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.product-form-actions .submit-btn {
+    width: auto;
+    min-width: 240px;
+}
+
+.image-preview-container {
+    width: 180px;
+    height: 180px;
+    border: 2px dashed #d9d9d9;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-product-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.admin-product-thumb-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f3f3;
+    color: #777;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 8px;
+}
+
+/* ========== HERO MARCAÇÕES / LOJA ========== */
 .marcacoes-hero,
 .loja-hero {
     min-height: 60vh;
@@ -932,6 +865,7 @@ section.sobre {
     font-family: 'Poppins', sans-serif;
 }
 
+/* ========== MARCAÇÕES ========== */
 .marcacoes-form-section {
     background: #fff;
 }
@@ -992,7 +926,12 @@ section.sobre {
     font-family: 'Poppins', sans-serif;
 }
 
-/* ===== ESTILIZAÇÃO DA SECÇÃO DE PRODUTOS ===== */
+/* ========== LOJA PRODUTOS ========== */
+.loja-section-center {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
 
 .sugestoes-section {
     padding: 60px 0 80px;
@@ -1006,27 +945,27 @@ section.sobre {
     color: #333;
     text-align: left;
     margin-bottom: 45px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: block;
 }
 
 .sugestoes-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     width: 100%;
+    align-items: stretch;
 }
 
 .produto-card-novo {
     background: #fff;
-    border: none;
-    border-radius: 12px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     transition: transform 0.3s, box-shadow 0.3s;
+    min-height: 100%;
 }
 
 .produto-card-novo:hover {
@@ -1037,24 +976,30 @@ section.sobre {
 .produto-img-wrap {
     position: relative;
     background: #fdfdfd;
-    aspect-ratio: 1 / 1;
+    height: 320px;
+    min-height: 320px;
+    max-height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    padding: 24px;
 }
 
 .produto-img-wrap img {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    padding: 20px;
+    margin: 0 auto;
 }
 
 .badge-status {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    padding: 6px 18px;
+    top: 14px;
+    right: 14px;
+    padding: 6px 16px;
     border-radius: 50px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -1067,35 +1012,40 @@ section.sobre {
     background-color: #c89238;
 }
 
-.badge-vendido {
-    background-color: #28a745;
-}
-
 .produto-info-novo {
-    padding: 20px 15px;
+    padding: 18px 18px 22px;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
 }
 
 .produto-nome {
     font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: #222;
-    margin-bottom: 8px;
-    line-height: 1.4;
+    line-height: 1.45;
     font-weight: 600;
+    min-height: 48px;
 }
 
 .produto-descricao-loja {
     font-family: 'Poppins', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     color: #666;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    line-height: 1.55;
+    min-height: 60px;
+    overflow: hidden;
+}
+
+.produto-preco-wrap {
+    margin-top: auto;
 }
 
 .preco-final {
     font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1.18rem;
     font-weight: 700;
     color: #222;
 }
@@ -1111,8 +1061,7 @@ section.sobre {
     font-family: 'Poppins', sans-serif;
 }
 
-/* ========== PÁGINA SERVIÇOS  ========== */
-
+/* ========== SERVIÇOS ========== */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 
 .main-services {
@@ -1252,73 +1201,7 @@ section.sobre {
     font-size: 0.8rem;
 }
 
-.admin-section-title {
-    margin-bottom: 25px;
-    font-family: 'Playfair Display', serif;
-    color: #333;
-}
-
-.field-note {
-    display: block;
-    margin-top: 8px;
-    color: #666;
-    font-size: 0.85rem;
-    font-family: 'Poppins', sans-serif;
-}
-
-.product-form textarea {
-    min-height: 110px;
-}
-
-.product-form-actions {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.product-form-actions .submit-btn {
-    width: auto;
-    min-width: 240px;
-}
-
-.image-preview-container {
-    width: 180px;
-    height: 180px;
-    border: 2px dashed #d9d9d9;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #fafafa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.image-preview-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.admin-product-thumb {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-}
-
-.admin-product-thumb-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f3f3f3;
-    color: #777;
-    font-size: 0.75rem;
-    text-align: center;
-    padding: 8px;
-}
-
+/* ========== SCROLL TOP ========== */
 .scroll-top-btn {
     position: fixed;
     right: 20px;
@@ -1343,6 +1226,12 @@ section.sobre {
 }
 
 /* ========== RESPONSIVE ========== */
+@media screen and (max-width: 1024px) {
+    .sugestoes-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 @media screen and (max-width: 768px) {
     header {
         height: auto;
@@ -1435,12 +1324,12 @@ section.sobre {
     .auth-container {
         padding: 40px 25px;
     }
-    
+
     .product-form,
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .admin-panel {
         padding-top: 150px;
     }
@@ -1493,12 +1382,18 @@ section.sobre {
     }
 
     .sugestoes-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
     }
 
     .sugestoes-section .section-title {
         font-size: 2.2rem;
+    }
+
+    .produto-img-wrap {
+        height: 260px;
+        min-height: 260px;
+        max-height: 260px;
     }
 }
 
@@ -1534,6 +1429,16 @@ section.sobre {
 
     .sugestoes-grid {
         grid-template-columns: 1fr;
+    }
+
+    .produto-img-wrap {
+        height: 240px;
+        min-height: 240px;
+        max-height: 240px;
+    }
+
+    .produto-info-novo {
+        padding: 16px;
     }
 }
 
