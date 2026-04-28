@@ -55,7 +55,7 @@ function getServicosFromProperty(prop) {
     if (!prop) return '';
 
     if (prop.type === 'multi_select') {
-        return (prop.multi_select || []).map(item => item.name).filter(Boolean).join(', ');
+        return (prop.multi_select || []).map(item => item.name).filter(Boolean).join(' + ');
     }
 
     if (prop.type === 'select') {
@@ -105,7 +105,7 @@ function buildMarcacaoProperties(dbProperties, data) {
 
     if (servicoProp && data.servico !== undefined) {
         const servicos = normalizarServicos(data.servico);
-        const servicoText = servicos.join(', ');
+        const servicoText = servicos.join(' + ');
         const servicoType = dbProperties[servicoProp]?.type;
 
         if (servicoType === 'multi_select') {
