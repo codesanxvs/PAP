@@ -1069,6 +1069,7 @@ section.sobre {
     max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
+    padding: 0 18px 70px;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -1095,17 +1096,23 @@ section.sobre {
     font-size: 1.8rem;
     font-weight: 700;
     color: #c89238;
-    margin: 60px 0 20px;
+    margin: 60px 0 26px;
     border-bottom: 2px solid #c89238;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .sanjam-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-bottom: 50px;
     table-layout: fixed;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 .sanjam-table th,
@@ -1116,15 +1123,21 @@ section.sobre {
 }
 
 .sanjam-table th {
-    background: #f9f9f9;
+    background: linear-gradient(135deg, #c89238, #bd8a30);
+    color: white;
     font-size: 0.75rem;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .sanjam-table td {
     border-bottom: 1px solid #eee;
     font-size: 0.95rem;
+}
+
+.sanjam-table tr:last-child td {
+    border-bottom: none;
 }
 
 .sanjam-table td:first-child,
@@ -1140,36 +1153,60 @@ section.sobre {
 
 .grid-estetica {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
     margin-top: 30px;
+    align-items: stretch;
 }
 
 .col-estetica {
-    background: #fff;
+    background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+    border: 1px solid rgba(200, 146, 56, 0.22);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.col-estetica:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
 }
 
 .col-estetica h3 {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    margin-bottom: 15px;
-    color: #1a1a1a;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    margin: 0;
+    color: #fff;
+    background: linear-gradient(135deg, #c89238, #bd8a30);
+    padding: 16px 18px;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .item-estetica {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #f5f5f5;
-    font-size: 0.9rem;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(200, 146, 56, 0.14);
+    font-size: 0.94rem;
+    line-height: 1.4;
+}
+
+.item-estetica:last-child {
+    border-bottom: none;
+}
+
+.item-estetica span:first-child {
+    color: #222;
 }
 
 .item-estetica span:last-child {
     color: #c89238;
-    font-weight: 700;
+    font-weight: 800;
+    white-space: nowrap;
 }
 
 .booking-section {
@@ -1460,4 +1497,120 @@ section.sobre {
     .main-services {
         padding: 0 15px;
     }
+}
+/* ========== PESQUISA DA LOJA ========== */
+.loja-search-area {
+    width: 100%;
+    max-width: 780px;
+    margin: -15px auto 35px;
+    text-align: center;
+}
+
+.loja-search-box {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border: 2px solid rgba(200, 146, 56, 0.25);
+    border-radius: 999px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.loja-search-box:focus-within {
+    border-color: #c89238;
+    box-shadow: 0 15px 45px rgba(200, 146, 56, 0.18);
+    transform: translateY(-2px);
+}
+
+.loja-search-icon {
+    padding-left: 24px;
+    font-size: 1.25rem;
+    color: #c89238;
+}
+
+.loja-search-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 18px 55px 18px 14px;
+    font-size: 1rem;
+    color: #333;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+}
+
+.loja-search-box input::placeholder {
+    color: #999;
+}
+
+.limpar-pesquisa-btn {
+    position: absolute;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: #f1e2c8;
+    color: #8b6424;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.limpar-pesquisa-btn.active {
+    display: flex;
+}
+
+.limpar-pesquisa-btn:hover {
+    background: #c89238;
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+.loja-search-results {
+    margin-top: 12px;
+    color: #666;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.loja-empty-state small {
+    display: block;
+    margin-top: 8px;
+    color: #777;
+    font-family: 'Poppins', sans-serif;
+}
+
+@media screen and (max-width: 768px) {
+    .loja-search-area {
+        margin-top: -5px;
+        margin-bottom: 25px;
+        padding: 0 10px;
+    }
+
+    .loja-search-box input {
+        padding: 15px 50px 15px 10px;
+        font-size: 0.95rem;
+    }
+
+    .loja-search-icon {
+        padding-left: 18px;
+    }
+}
+
+#contactos {
+    scroll-margin-top: 220px;
+}
+
+.contact.section,
+.loja-showcase.section {
+    opacity: 1;
+    transform: none;
 }
