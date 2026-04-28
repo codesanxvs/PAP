@@ -37,6 +37,42 @@ async function getDatabaseProperties(databaseId) {
     return dbInfo.properties || {};
 }
 
+function normalizarServicos(servico) {
+    if (Array.isArray(servico)) {
+        return servico.map(item => String(item || '').trim()).filter(Boolean);
+    }
+
+    const texto = String(servico || '').trim();
+    if (!texto) return [];
+
+    return texto
+        .split(/\s*(?:,|;|\+|\n)\s*/)
+        .map(item => item.trim())
+        .filter(Boolean);
+}
+
+function getServicosFromProperty(prop) {
+    if (!prop) return '';
+
+    if (prop.type === 'multi_select') {
+        return (prop.multi_select || []).map(item => item.name).filter(Boolean).join(', ');
+    }
+
+    if (prop.type === 'select') {
+        return prop.select?.name || '';
+    }
+
+    if (prop.type === 'rich_text') {
+        return getPlainTextFromRichText(prop.rich_text);
+    }
+
+    if (prop.type === 'title') {
+        return getPlainTextFromTitle(prop.title);
+    }
+
+    return '';
+}
+
 function buildMarcacaoProperties(dbProperties, data) {
     const servicoProp = getFirstPropertyName(dbProperties, name => name.includes('servi'));
     const obsProp = getFirstPropertyName(dbProperties, name => name.includes('observa'));
@@ -68,9 +104,23 @@ function buildMarcacaoProperties(dbProperties, data) {
     }
 
     if (servicoProp && data.servico !== undefined) {
-        properties[servicoProp] = {
-            select: { name: data.servico }
-        };
+        const servicos = normalizarServicos(data.servico);
+        const servicoText = servicos.join(', ');
+        const servicoType = dbProperties[servicoProp]?.type;
+
+        if (servicoType === 'multi_select') {
+            properties[servicoProp] = {
+                multi_select: servicos.map(nome => ({ name: nome }))
+            };
+        } else if (servicoType === 'rich_text') {
+            properties[servicoProp] = {
+                rich_text: servicoText ? [{ text: { content: servicoText } }] : []
+            };
+        } else {
+            properties[servicoProp] = {
+                select: { name: servicoText }
+            };
+        }
     }
 
     if (obsProp && data.observacoes !== undefined) {
@@ -157,8 +207,9 @@ app.get('/api/marcacoes/verificar', async (req, res) => {
 app.post('/api/marcacoes', async (req, res) => {
     try {
         const { nome, telefone, email, servico, data, hora, observacoes } = req.body;
+        const servicos = normalizarServicos(servico);
 
-        if (!nome || !telefone || !servico || !data || !hora) {
+        if (!nome || !telefone || !servicos.length || !data || !hora) {
             return res.status(400).json({ success: false, message: 'Campos obrigatórios em falta' });
         }
 
@@ -181,7 +232,7 @@ app.post('/api/marcacoes', async (req, res) => {
 
         const dbProperties = await getDatabaseProperties(MARCACOES_DATABASE_ID);
         const properties = buildMarcacaoProperties(dbProperties, {
-            nome, telefone, email, servico, data, hora, observacoes
+            nome, telefone, email, servico: servicos, data, hora, observacoes
         });
 
         await notion.pages.create({
@@ -218,7 +269,7 @@ app.get('/api/marcacoes', async (req, res) => {
             nome: getPlainTextFromTitle(page.properties['Nome']?.title),
             telefone: page.properties['Telefone']?.phone_number || '',
             email: page.properties['Email']?.email || '',
-            servico: servicoProp ? page.properties[servicoProp]?.select?.name || '' : '',
+            servico: servicoProp ? getServicosFromProperty(page.properties[servicoProp]) : '',
             observacoes: obsProp ? getPlainTextFromRichText(page.properties[obsProp]?.rich_text) : '',
             data: page.properties['Data Preferida']?.date?.start || '',
             hora: page.properties['Hora Preferida']?.select?.name || ''
@@ -239,8 +290,9 @@ app.put('/api/marcacoes/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { nome, telefone, email, servico, data, hora, observacoes } = req.body;
+        const servicos = normalizarServicos(servico);
 
-        if (!nome || !telefone || !servico || !data || !hora) {
+        if (!nome || !telefone || !servicos.length || !data || !hora) {
             return res.status(400).json({ success: false, message: 'Campos obrigatórios em falta para editar.' });
         }
 
@@ -266,7 +318,7 @@ app.put('/api/marcacoes/:id', async (req, res) => {
         }
 
         const properties = buildMarcacaoProperties(dbProperties, {
-            nome, telefone, email, servico, data, hora, observacoes
+            nome, telefone, email, servico: servicos, data, hora, observacoes
         });
 
         await notion.pages.update({

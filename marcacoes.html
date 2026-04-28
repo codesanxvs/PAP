@@ -65,10 +65,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="servico">Serviço Pretendido *</label>
-                            <select id="servico" name="servico" required>
-                                <option value="">Selecione um serviço</option>
-
+                            <label for="servico">Serviços Pretendidos *</label>
+                            <select id="servico" name="servico" multiple required class="multi-servico-select-hidden" aria-hidden="true" tabindex="-1">
                                 <optgroup label="Cabeleireiro">
                                     <option value="Corte">Corte</option>
                                     <option value="Brushing">Brushing</option>
@@ -116,6 +114,14 @@
                                     <option value="Perna Inteira (PI)">Perna Inteira (PI)</option>
                                 </optgroup>
                             </select>
+                            <div class="servicos-picker" id="servicosPicker">
+                                <button type="button" class="servicos-picker-box" id="servicosPickerBtn" aria-expanded="false">
+                                    <span class="servicos-placeholder" id="servicosPlaceholder">Selecionar serviços...</span>
+                                    <div class="servicos-tags" id="servicosTags"></div>
+                                    <span class="servicos-arrow">⌄</span>
+                                </button>
+                                <div class="servicos-options" id="servicosOptions"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -174,6 +180,18 @@
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
+            const servicoSelect = document.getElementById('servico');
+            const servicosSelecionados = Array.from(servicoSelect.selectedOptions).map(option => option.value).filter(Boolean);
+
+            if (!servicosSelecionados.length) {
+                alert('Selecione pelo menos um serviço.');
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                return;
+            }
+
+            data.servico = servicosSelecionados;
 
             try {
                 const cleanUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
@@ -208,6 +226,8 @@
                 if (result.success) {
                     alert(`✅ Marcação enviada com sucesso!\nObrigado, ${data.nome}.`);
                     this.reset();
+                    document.querySelectorAll('#servicosOptions input[type="checkbox"]').forEach(input => input.checked = false);
+                    if (typeof renderServicosTags === 'function') renderServicosTags();
                 } else {
                     throw new Error(result.message || 'Erro ao processar a marcação');
                 }
@@ -226,6 +246,91 @@
             const dataInput = document.getElementById('data');
             const hoje = new Date().toISOString().split('T')[0];
             dataInput.setAttribute('min', hoje);
+
+            const servicoSelect = document.getElementById('servico');
+            const picker = document.getElementById('servicosPicker');
+            const pickerBtn = document.getElementById('servicosPickerBtn');
+            const optionsBox = document.getElementById('servicosOptions');
+            const tagsBox = document.getElementById('servicosTags');
+            const placeholder = document.getElementById('servicosPlaceholder');
+
+            function getServicosSelecionados() {
+                return Array.from(servicoSelect.selectedOptions).map(option => option.value).filter(Boolean);
+            }
+
+            function renderServicosTags() {
+                const selecionados = getServicosSelecionados();
+                tagsBox.innerHTML = '';
+                placeholder.style.display = selecionados.length ? 'none' : 'inline';
+
+                selecionados.forEach(servico => {
+                    const tag = document.createElement('span');
+                    tag.className = 'servico-tag';
+                    tag.innerHTML = `<span>${servico}</span><button type="button" aria-label="Remover ${servico}">×</button>`;
+                    tag.querySelector('button').addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        const option = Array.from(servicoSelect.options).find(opt => opt.value === servico);
+                        if (option) option.selected = false;
+                        const checkbox = Array.from(optionsBox.querySelectorAll('input[type="checkbox"]')).find(input => input.value === servico);
+                        if (checkbox) checkbox.checked = false;
+                        renderServicosTags();
+                    });
+                    tagsBox.appendChild(tag);
+                });
+            }
+
+            function criarOpcaoServico(option) {
+                const label = document.createElement('label');
+                label.className = 'servicos-option';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = option.value;
+                checkbox.checked = option.selected;
+
+                const texto = document.createElement('span');
+                texto.textContent = option.textContent;
+
+                checkbox.addEventListener('change', function() {
+                    option.selected = checkbox.checked;
+                    renderServicosTags();
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(texto);
+                optionsBox.appendChild(label);
+            }
+
+            function construirListaServicos() {
+                optionsBox.innerHTML = '';
+                Array.from(servicoSelect.children).forEach(child => {
+                    if (child.tagName === 'OPTGROUP') {
+                        const groupTitle = document.createElement('div');
+                        groupTitle.className = 'servicos-options-group';
+                        groupTitle.textContent = child.label;
+                        optionsBox.appendChild(groupTitle);
+                        Array.from(child.children).forEach(option => criarOpcaoServico(option));
+                    } else if (child.tagName === 'OPTION' && child.value) {
+                        criarOpcaoServico(child);
+                    }
+                });
+            }
+
+            pickerBtn.addEventListener('click', function() {
+                picker.classList.toggle('active');
+                pickerBtn.setAttribute('aria-expanded', picker.classList.contains('active') ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!picker.contains(event.target)) {
+                    picker.classList.remove('active');
+                    pickerBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            construirListaServicos();
+            renderServicosTags();
+
         });
     </script>
 </body>
