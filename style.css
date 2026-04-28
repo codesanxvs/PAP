@@ -1614,3 +1614,69 @@ section.sobre {
     opacity: 1;
     transform: none;
 }
+
+/* =========================================================
+   FORMATO MOBILE FINAL — FLASH CABELEIREIRO
+   ========================================================= */
+@media screen and (max-width: 768px) {
+    body { overflow-x: hidden; }
+    .center { width: 100%; max-width: 100%; padding: 0 18px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
+    header { height: 86px; padding: 8px 0; position: fixed; top: 0; left: 0; background: rgba(255,255,255,.97); backdrop-filter: blur(10px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .logo { width: auto; padding: 0; justify-content: flex-start; z-index: 1002; }
+    .logo img, .logo-text { width: 62px; height: 62px; min-width: 62px; font-size: .75rem; border-width: 2px; }
+    .icon { display: flex; width: auto; padding: 0; z-index: 1002; }
+    .icon-placeholder { width: 46px; height: 46px; font-size: 22px; }
+    .menu { position: fixed; top: 86px; left: 0; width: 100%; display: none; flex-direction: column; gap: 0; padding: 12px 18px 20px; background: #fff; text-align: left; box-shadow: 0 14px 30px rgba(0,0,0,.12); border-top: 1px solid rgba(200,146,56,.16); z-index: 1001; }
+    .menu.active { display: flex !important; }
+    .menu a { width: 100%; padding: 14px 12px; font-size: 1rem; border-bottom: 1px solid #f1f1f1; color: #9b6c21; }
+    .menu a::after { display: none; }
+    .user-avatar-menu { padding-top: 0; margin-left: auto; margin-right: 12px; z-index: 1002; }
+    .user-avatar { width: 42px; height: 42px; font-size: 1rem; }
+    .user-dropdown { position: fixed; top: 86px; right: 12px; left: 12px; width: auto; min-width: 0; }
+    section.sobre { min-height: 100vh; height: auto; padding-top: 110px; display: flex; align-items: center; }
+    .texto-sobre { position: relative; top: auto; left: auto; transform: none; max-width: 100%; padding: 35px 0 65px; text-align: left; }
+    .texto-sobre h1 { font-size: clamp(2.25rem, 12vw, 3.2rem); line-height: 1.05; margin-bottom: 1.4rem; }
+    .texto-sobre p { font-size: 1rem; line-height: 1.7; margin: 0; max-width: 95%; }
+    .extras { width: 520px; height: 520px; right: -310px; bottom: -250px; opacity: .9; }
+    .hair-tools .tool { font-size: 1.45rem; opacity: .35; }
+    .section { padding: 55px 0; }
+    .section-title { font-size: 2rem; margin-bottom: 2rem; line-height: 1.15; }
+    .contact-info { grid-template-columns: 1fr; gap: 18px; text-align: left; }
+    .marcacoes-hero, .loja-hero, .services-hero { min-height: 360px; padding-top: 115px; display: flex; align-items: center; }
+    .marcacoes-hero-content h1, .loja-hero-content h1, .services-hero h1 { font-size: clamp(2.2rem, 11vw, 3.2rem); line-height: 1.05; }
+    .marcacoes-hero-content p, .loja-hero-content p, .services-hero p { font-size: 1rem; line-height: 1.6; }
+    .marcacao-form, .auth-container, .product-form, .admin-tab-content { padding: 24px 18px; border-radius: 18px; }
+    .form-row, .product-form { display: grid; grid-template-columns: 1fr !important; gap: 0; }
+    .form-group { margin-bottom: 18px; }
+    .form-group input, .form-group select, .form-group textarea, .loja-search-box input { font-size: 16px; }
+    .submit-btn, .btn-submit, .email-register-btn, .admin-action-btn { width: 100%; min-height: 48px; justify-content: center; }
+    .auth-container { margin: 0 12px; max-width: 100%; }
+    .auth-title { font-size: 2rem; }
+    .sugestoes-section .center, .loja-section-center { display: block; }
+    .sugestoes-grid { grid-template-columns: 1fr !important; gap: 22px; }
+    .produto-img-wrap { height: 230px !important; min-height: 230px !important; max-height: 230px !important; }
+    .produto-info-novo { padding: 18px; }
+    .loja-search-area { margin: -5px auto 25px; padding: 0; }
+    .loja-search-box { border-radius: 18px; }
+    .admin-panel { padding: 115px 14px 45px; }
+    .admin-header h1 { font-size: 2rem; line-height: 1.15; }
+    .stats-grid { grid-template-columns: 1fr !important; gap: 18px; }
+    .admin-tabs { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .admin-tab-btn { width: 100%; }
+    .admin-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; }
+    .admin-table { min-width: 760px; }
+    .admin-table th, .admin-table td { padding: 12px; font-size: .9rem; }
+    .main-services { padding: 0 14px; }
+    .category-header { font-size: 1.35rem; margin-top: 38px; }
+    .sanjam-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; table-layout: auto; border-radius: 14px; }
+    .sanjam-table th, .sanjam-table td { min-width: 110px; width: auto; padding: 12px 10px; font-size: .85rem; white-space: nowrap; }
+    .sanjam-table th:first-child, .sanjam-table td:first-child { min-width: 150px; position: sticky; left: 0; z-index: 2; background: #fff; }
+    .sanjam-table th:first-child { background: linear-gradient(135deg, #c89238, #bd8a30); }
+    .grid-estetica { grid-template-columns: 1fr !important; gap: 18px; }
+    #contactos { scroll-margin-top: 100px; }
+}
+@media screen and (max-width: 380px) {
+    .texto-sobre h1, .marcacoes-hero-content h1, .loja-hero-content h1, .services-hero h1 { font-size: 2.05rem; }
+    .center { padding: 0 14px; }
+    .produto-img-wrap { height: 210px !important; min-height: 210px !important; max-height: 210px !important; }
+}
