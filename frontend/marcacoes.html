@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Marcações - Flash Cabeleireiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="center">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="assets/logo.png" alt="Flash Cabeleireiro" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-text" style="display: none;">FLASH<br><small style="font-size: 0.7em;">CABELEIREIRO</small></div>
+                </a>
+            </div>
+            
+            <div class="menu" id="menu">
+                <a href="index.html">Início</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="loja.html">Produtos</a>
+                <a href="marcacoes.html" class="active">Marcações</a>
+                <a href="index.html#contactos">Contactos</a>
+            </div>
+            
+            <div class="icon">
+                <div class="icon-placeholder" onclick="toggleMenu()">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="marcacoes-hero">
+        <div class="center">
+            <div class="marcacoes-hero-content">
+                <h1><span class="highlight">Marque o seu</span><br>Atendimento</h1>
+                <p>Escolha o melhor horário para cuidar da sua beleza.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section visible marcacoes-form-section">
+        <div class="center">
+            <div class="form-container">
+                <h2 class="section-title">Preencha os Seus Dados</h2>
+                
+                <form id="marcacaoForm" class="marcacao-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo *</label>
+                            <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone *</label>
+                            <input type="tel" id="telefone" name="telefone" required placeholder="+351 912 345 678">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.pt">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="servico">Serviços Pretendidos *</label>
+                            <select id="servico" name="servico" multiple required class="multi-servico-select-hidden" aria-hidden="true" tabindex="-1">
+                                <optgroup label="Cabeleireiro">
+                                    <option value="Corte">Corte</option>
+                                    <option value="Brushing">Brushing</option>
+                                    <option value="Mise">Mise</option>
+                                    <option value="Coloração">Coloração</option>
+                                    <option value="Descoloração">Descoloração</option>
+                                    <option value="Permanente">Permanente</option>
+                                    <option value="Desfrisagem">Desfrisagem</option>
+                                    <option value="Madeixas">Madeixas</option>
+                                    <option value="Madeixas c/ Prata">Madeixas c/ Prata</option>
+                                    <option value="Nuances">Nuances</option>
+                                    <option value="Nuances c/ Prata">Nuances c/ Prata</option>
+                                    <option value="Shampoo Especial">Shampoo Especial</option>
+                                    <option value="Creme Normal">Creme Normal</option>
+                                    <option value="Máscaras">Máscaras</option>
+                                    <option value="Espuma">Espuma</option>
+                                    <option value="Ampolas Tratamento">Ampolas Tratamento</option>
+                                </optgroup>
+
+                                <optgroup label="Estética & Rosto">
+                                    <option value="Limpeza de pele">Limpeza de pele</option>
+                                    <option value="Maquilhagem">Maquilhagem</option>
+                                </optgroup>
+
+                                <optgroup label="Unhas">
+                                    <option value="Mãos (sem verniz)">Embelezamento de mãos (sem verniz)</option>
+                                    <option value="Mãos (com verniz)">Embelezamento de mãos (com verniz)</option>
+                                    <option value="Pés (sem verniz)">Embelezamento de pés (sem verniz)</option>
+                                    <option value="Pés (com verniz)">Embelezamento de pés (com verniz)</option>
+                                </optgroup>
+
+                                <optgroup label="Depilação Facial">
+                                    <option value="Sobrancelhas">Sobrancelhas</option>
+                                    <option value="Buço">Buço</option>
+                                    <option value="Buço e Queixo">Buço e Queixo</option>
+                                    <option value="Rosto">Rosto</option>
+                                </optgroup>
+
+                                <optgroup label="Depilação Corporal & Pernas">
+                                    <option value="Axilas">Axilas</option>
+                                    <option value="Virilhas">Virilhas</option>
+                                    <option value="Virilhas cavadas">Virilhas cavadas</option>
+                                    <option value="Virilhas completas">Virilhas completas</option>
+                                    <option value="Meia Perna (MP)">Meia Perna (MP)</option>
+                                    <option value="Perna Inteira (PI)">Perna Inteira (PI)</option>
+                                </optgroup>
+                            </select>
+                            <div class="servicos-picker" id="servicosPicker">
+                                <button type="button" class="servicos-picker-box" id="servicosPickerBtn" aria-expanded="false">
+                                    <span class="servicos-placeholder" id="servicosPlaceholder">Selecionar serviços...</span>
+                                    <div class="servicos-tags" id="servicosTags"></div>
+                                    <span class="servicos-arrow">⌄</span>
+                                </button>
+                                <div class="servicos-options" id="servicosOptions"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data">Data Preferida *</label>
+                            <input type="date" id="data" name="data" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hora">Hora Preferida *</label>
+                            <select id="hora" name="hora" required>
+                                <option value="">Horário</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                                <option value="18:00">18:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Alguma informação adicional..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span id="btnText">Enviar Pedido de Marcação</span>
+                            <span id="btnLoader" style="display: none;">⏳ Verificando disponibilidade...</span>
+                        </button>
+                        <p class="form-note">* Entraremos em contacto para confirmar a sua marcação</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('marcacaoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            const servicoSelect = document.getElementById('servico');
+            const servicosSelecionados = Array.from(servicoSelect.selectedOptions).map(option => option.value).filter(Boolean);
+
+            if (!servicosSelecionados.length) {
+                alert('Selecione pelo menos um serviço.');
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                return;
+            }
+
+            data.servico = servicosSelecionados;
+
+            try {
+                const cleanUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+
+                const checkResponse = await fetch(
+                    `${cleanUrl}/api/marcacoes/verificar?data=${encodeURIComponent(data.data)}&hora=${encodeURIComponent(data.hora)}`
+                );
+
+                const checkResult = await checkResponse.json();
+
+                if (!checkResponse.ok) {
+                    throw new Error(checkResult.message || 'Erro ao verificar disponibilidade');
+                }
+
+                if (checkResult.exists) {
+                    alert(`⚠️ O horário das ${data.hora} no dia ${data.data} já está reservado. Por favor, escolha outra hora.`);
+                    return;
+                }
+
+                const response = await fetch(`${cleanUrl}/api/marcacoes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.error || 'Erro ao processar a marcação');
+                }
+
+                if (result.success) {
+                    alert(`✅ Marcação enviada com sucesso!\nObrigado, ${data.nome}.`);
+                    this.reset();
+                    document.querySelectorAll('#servicosOptions input[type="checkbox"]').forEach(input => input.checked = false);
+                    if (typeof renderServicosTags === 'function') renderServicosTags();
+                } else {
+                    throw new Error(result.message || 'Erro ao processar a marcação');
+                }
+
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(`❌ ${error.message || 'Erro ao processar a marcação. Tente novamente mais tarde.'}`);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dataInput = document.getElementById('data');
+            const hoje = new Date().toISOString().split('T')[0];
+            dataInput.setAttribute('min', hoje);
+
+            const servicoSelect = document.getElementById('servico');
+            const picker = document.getElementById('servicosPicker');
+            const pickerBtn = document.getElementById('servicosPickerBtn');
+            const optionsBox = document.getElementById('servicosOptions');
+            const tagsBox = document.getElementById('servicosTags');
+            const placeholder = document.getElementById('servicosPlaceholder');
+
+            function getServicosSelecionados() {
+                return Array.from(servicoSelect.selectedOptions).map(option => option.value).filter(Boolean);
+            }
+
+            function renderServicosTags() {
+                const selecionados = getServicosSelecionados();
+                tagsBox.innerHTML = '';
+                placeholder.style.display = selecionados.length ? 'none' : 'inline';
+
+                selecionados.forEach(servico => {
+                    const tag = document.createElement('span');
+                    tag.className = 'servico-tag';
+                    tag.innerHTML = `<span>${servico}</span><button type="button" aria-label="Remover ${servico}">×</button>`;
+                    tag.querySelector('button').addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        const option = Array.from(servicoSelect.options).find(opt => opt.value === servico);
+                        if (option) option.selected = false;
+                        const checkbox = Array.from(optionsBox.querySelectorAll('input[type="checkbox"]')).find(input => input.value === servico);
+                        if (checkbox) checkbox.checked = false;
+                        renderServicosTags();
+                    });
+                    tagsBox.appendChild(tag);
+                });
+            }
+
+            function criarOpcaoServico(option) {
+                const label = document.createElement('label');
+                label.className = 'servicos-option';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = option.value;
+                checkbox.checked = option.selected;
+
+                const texto = document.createElement('span');
+                texto.textContent = option.textContent;
+
+                checkbox.addEventListener('change', function() {
+                    option.selected = checkbox.checked;
+                    renderServicosTags();
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(texto);
+                optionsBox.appendChild(label);
+            }
+
+            function construirListaServicos() {
+                optionsBox.innerHTML = '';
+                Array.from(servicoSelect.children).forEach(child => {
+                    if (child.tagName === 'OPTGROUP') {
+                        const groupTitle = document.createElement('div');
+                        groupTitle.className = 'servicos-options-group';
+                        groupTitle.textContent = child.label;
+                        optionsBox.appendChild(groupTitle);
+                        Array.from(child.children).forEach(option => criarOpcaoServico(option));
+                    } else if (child.tagName === 'OPTION' && child.value) {
+                        criarOpcaoServico(child);
+                    }
+                });
+            }
+
+            pickerBtn.addEventListener('click', function() {
+                picker.classList.toggle('active');
+                pickerBtn.setAttribute('aria-expanded', picker.classList.contains('active') ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!picker.contains(event.target)) {
+                    picker.classList.remove('active');
+                    pickerBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            construirListaServicos();
+            renderServicosTags();
+
+        });
+    </script>
+</body>
+</html>
